@@ -53,12 +53,16 @@ class Solver(BaseSolver):
                     f"This {self.device} device has no support for float64 compute"
                 )
 
-            init = objective_dict["init"]
-            if not hasattr(init, "copy") and (init == "k-means++"):
-                return True, (
-                    "support for k-means++ is not implemented in scikit-learn-intelex "
-                    "for devices other than cpu."
-                )
+        init = objective_dict["init"]
+        if (
+            (not hasattr(init, "copy"))
+            and (init == "k-means++")
+            and (self.device != "cpu")
+        ):
+            return True, (
+                "support for k-means++ is not implemented in scikit-learn-intelex "
+                "for devices other than cpu."
+            )
 
         sample_weight = objective_dict["sample_weight"]
         if sample_weight is not None:
@@ -90,18 +94,16 @@ class Solver(BaseSolver):
             if hasattr(sample_weight, "copy"):
                 sample_weight = dpt.asarray(sample_weight, copy=True, device=device)
 
-            self.sample_weight = sample_weight
-
             if hasattr(init, "copy"):
                 init = dpt.asarray(init, copy=True, device=device)
         else:
             self.X = X.copy()
             if hasattr(sample_weight, "copy"):
                 sample_weight = sample_weight.copy()
-            self.sample_weight = sample_weight
             if hasattr(init, "copy"):
                 init = init.copy()
 
+        self.sample_weight = sample_weight
         self.init = init
         self.n_clusters = n_clusters
         self.n_init = n_init

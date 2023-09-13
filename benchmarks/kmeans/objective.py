@@ -1,5 +1,4 @@
-from benchopt import safe_import_context
-from benchopt.base import BaseObjective
+from benchopt import BaseObjective, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
