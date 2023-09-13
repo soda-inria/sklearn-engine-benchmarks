@@ -103,7 +103,6 @@ class Solver(BaseSolver):
             ).fit(self.X, y=None, sample_weight=self.sample_weight)
             self.inertia_ = estimator.inertia_
             self.n_iter_ = estimator.n_iter_
-        print(self.inertia_)
 
     def get_result(self):
         return {"inertia": self.inertia_, "n_iter": self.n_iter_}
