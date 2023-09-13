@@ -8,6 +8,13 @@ with safe_import_context() as import_ctx:
 
 
 class Solver(BaseSolver):
+    """Note: not sure this solver actually should fit here.
+
+    It is not documented wether it runs the lloyd algorithm or equivalent brute-force
+    algorithm, and if the iterations are meant to result in the same inertia than
+    other solvers on the bench ?
+    """
+
     name = "cuml"
     requirements = ["cuml"]
 
