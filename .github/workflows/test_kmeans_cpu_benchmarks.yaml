@@ -1,0 +1,82 @@
+name: Run tests
+on:
+  pull_request:
+  push: { branches: main }
+  schedule:
+    - cron: '00 00 * * 1'
+
+env:
+  _SCIKIT_LEARN_COMMIT: 2ccfc8c4bdf66db005d7681757b4145842944fb9
+  _BENCHOPT_COMMIT: fc4d7fe6492dacca3d6cb5d512a3a9b3d5f84df5
+  _SKLEARN_NUMBA_DPEX_COMMIT: e6e901757fced52abee8e1750a5f0004d35b0f3e
+
+
+# TODO: setup runners with compatible gpus and also test gpu benchmarks
+jobs:
+  build_scikit_learn_and_benchopt:
+    name: Build scikit-learn and benchopt
+    runs-on: ubuntu-latest
+    container: jjerphan/numba_dpex_dev:latest
+
+    steps:
+    - name: Install build pre-requisites
+      run: |
+        apt-get update --quiet
+        apt-get install -y build-essential python3-dev
+        pip install cython numpy scipy joblib threadpoolctl build wheel
+
+    - name: Build scikit-learn`
+      run: |
+        git clone https://github.com/fcharras/scikit-learn -b "feature/engine-api"
+        cd scikit-learn
+        git checkout $_SCIKIT_LEARN_COMMIT
+        python setup.py bdist_wheel
+
+    # NB: building benchopt from source will not be needed after next benchopt release
+    - name: Build benchopt
+      run: |
+        git clone https://github.com/benchopt/benchopt -b main
+        cd benchopt
+        git checkout $_BENCHOPT_COMMIT
+        python -m build --wheel --outdir dist/
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        name: wheels
+        path: |
+          benchopt/dist/
+          scikit-learn/dist/
+        retention-days: 14
+
+  run_sklearn_numba_dpex_benchmarks:
+    name: Run sklearn_numba_dpex benchmarks on CPU
+    needs: build_scikit_learn_and_benchopt
+    runs-on: ubuntu-latest
+    container: jjerphan/numba_dpex_dev:latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: download scikit-learn and benchopt wheels
+      uses: actions/download-artifact@v3
+      with:
+        name: wheels
+
+    - name: install all dependencies
+      run: |
+        git clone https://github.com/soda-inria/sklearn-numba-dpex -b main
+        cd sklearn-numba-dpex
+        git checkout $_SKLEARN_NUMBA_DPEX_COMMIT
+        # TODO: it seems that non-editable install of sklearn-numba-dpex doesn't work ?
+        # Fix and update the install command here to avoid having to git clone manually
+        pip install ../scikit-learn/dist/*.whl ../benchopt/dist/*.whl -e .
+
+    - name: Check oneapi default device
+      run: python -c "import dpctl; dpctl.select_default_device().print_device_info()"
+
+    - name: Run k-means benchmarks
+      run: |
+        cd benchmarks/kmeans
+        benchopt run --no-plot -l -d simulated[n_samples=1000,n_features=14]
