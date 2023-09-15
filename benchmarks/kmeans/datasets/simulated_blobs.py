@@ -25,4 +25,4 @@ class Dataset(BaseDataset):
 
         X, *_ = make_correlated_data(self.n_samples, self.n_features, random_state=rng)
 
-        return dict(X=X.astype(getattr(np, self.dtype)))
+        return dict(X=X.astype(getattr(np, self.dtype)), **self._parameters)

@@ -28,7 +28,7 @@ class Objective(BaseObjective):
         sample_weight=["None", "unary", "random"],  # ???: defaut ?
     )
 
-    def set_data(self, X):
+    def set_data(self, X, **dataset_parameters):
         self.X = X
         dtype = X.dtype
 
@@ -61,9 +61,26 @@ class Objective(BaseObjective):
 
         self.init_ = init
         self.sample_weight_ = sample_weight
+        self.dataset_parameters = dataset_parameters
 
-    def evaluate_result(self, inertia, n_iter):
-        return dict(value=inertia, n_iter=n_iter)
+    def evaluate_result(self, inertia, n_iter, **solver_parameters):
+        all_parameters = dict()
+        all_parameters.update(
+            {
+                ("dataset_param_" + key): value
+                for key, value in self.dataset_parameters.items()
+            }
+        )
+        all_parameters.update(
+            {
+                ("objective_param_" + key): value
+                for key, value in self._parameters.items()
+            }
+        )
+        all_parameters.update(
+            {("solver_param_" + key): value for key, value in solver_parameters.items()}
+        )
+        return dict(value=inertia, n_iter=n_iter, **all_parameters)
 
     def get_one_result(self):
         return dict(inertia=1, n_iter=100)
