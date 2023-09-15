@@ -6,7 +6,7 @@ with safe_import_context() as import_ctx:
 
 
 class Dataset(BaseDataset):
-    name = "Simulated"
+    name = "Simulated_correlated_data"
 
     parameters = {
         "n_samples, n_features": [(50_000_000, 14), (10_000_000, 14)],
@@ -25,4 +25,6 @@ class Dataset(BaseDataset):
 
         X, *_ = make_correlated_data(self.n_samples, self.n_features, random_state=rng)
 
-        return dict(X=X.astype(getattr(np, self.dtype)), **self._parameters)
+        return dict(
+            X=X.astype(getattr(np, self.dtype)), __name=self.name, **self._parameters
+        )

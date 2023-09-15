@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from benchopt import BaseObjective, safe_import_context
 
 with safe_import_context() as import_ctx:
@@ -64,7 +66,9 @@ class Objective(BaseObjective):
         self.dataset_parameters = dataset_parameters
 
     def evaluate_result(self, inertia, n_iter, **solver_parameters):
-        all_parameters = dict()
+        all_parameters = dict(
+            solver_param_run_date=datetime.today().strftime("%Y-%m-%d")
+        )
         all_parameters.update(
             {
                 ("dataset_param_" + key): value
@@ -80,7 +84,12 @@ class Objective(BaseObjective):
         all_parameters.update(
             {("solver_param_" + key): value for key, value in solver_parameters.items()}
         )
-        return dict(value=inertia, n_iter=n_iter, **all_parameters)
+        return dict(
+            value=inertia,
+            n_iter=n_iter,
+            objective_param___name=self.name,
+            **all_parameters,
+        )
 
     def get_one_result(self):
         return dict(inertia=1, n_iter=100)

@@ -142,4 +142,9 @@ class Solver(BaseSolver):
         self.n_iter_ = estimator.n_iter_
 
     def get_result(self):
-        return dict(inertia=self.inertia_, n_iter=self.n_iter_, **self._parameters)
+        return dict(
+            inertia=self.inertia_,
+            n_iter=self.n_iter_,
+            __name=self.name,
+            **self._parameters,
+        )

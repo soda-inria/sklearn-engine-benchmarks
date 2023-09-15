@@ -157,4 +157,4 @@ jobs:
       run: |
         export PYTHONPATH=$PYTHONPATH:$(realpath ./kmeans_dpcpp/)
         cd benchmarks/kmeans
-        benchopt run --no-plot -l -d simulated[n_samples=1000,n_features=14]
+        benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=1000,n_features=14]
