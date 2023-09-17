@@ -66,9 +66,7 @@ class Objective(BaseObjective):
         self.dataset_parameters = dataset_parameters
 
     def evaluate_result(self, inertia, n_iter, **solver_parameters):
-        all_parameters = dict(
-            solver_param_run_date=datetime.today().strftime("%Y-%m-%d")
-        )
+        all_parameters = dict(solver_param_run_date=datetime.today())
         all_parameters.update(
             {
                 ("dataset_param_" + key): value
