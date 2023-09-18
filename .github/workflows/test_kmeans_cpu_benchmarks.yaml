@@ -1,4 +1,5 @@
-name: Run tests
+name: Run CPU benchmarks on a few data sample
+
 on:
   pull_request:
   push: { branches: main }
@@ -119,7 +120,7 @@ jobs:
 
 
   run_benchmarks_on_cpu:
-    name: Run benchmarks on cpu
+    name: Run benchmarks
     needs: [build_scikit_learn_and_benchopt, build_kmeans_dpcpp]
     runs-on: ubuntu-latest
     container: jjerphan/numba_dpex_dev:latest

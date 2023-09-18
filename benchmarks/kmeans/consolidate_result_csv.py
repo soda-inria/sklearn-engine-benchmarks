@@ -207,7 +207,7 @@ def _validate_one_csv_table(path):
         usecols=TABLE_DISPLAY_ORDER,
         dtype=COLUMNS_DTYPES,
         index_col=False,
-        na_values=NA_VALUES,
+        na_values={col: NA_VALUES for col in COLUMNS_WITH_NONE_STRING},
         keep_default_na=False,
     )
 
@@ -218,13 +218,14 @@ def _validate_one_csv_table(path):
 def _assemble_output_table(*df_list):
     if len(df_list) > 1:
         df = pd.concat(df_list, ignore_index=True, copy=False)
+    else:
+        df = df_list[0]
 
     df = df[TABLE_DISPLAY_ORDER]
     df.sort_values(
         by=_row_sort_by, ascending=_row_sort_ascending, inplace=True, kind="stable"
     )
     df.drop_duplicates(subset=UNIQUE_BENCHMARK_KEY, inplace=True, ignore_index=True)
-    df[RUN_DATE] = df[RUN_DATE].dt.strftime(DATES_FORMAT)
     return df
 
 
@@ -236,7 +237,7 @@ if __name__ == "__main__":
     argparser = ArgumentParser(
         description=(
             "Print an aggregated CSV-formated database of k-means benchmark results "
-            "for the the sklearn-engine-benchmarks project hosted at "
+            "for the sklearn-engine-benchmarks project hosted at "
             "https://github.com/soda-inria/sklearn-engine-benchmarks.\n\n"
             "The inputs are assumed to be a collection of benchopt parquet files and "
             "CSV files, well formated according to the project current specs. This "
@@ -255,19 +256,48 @@ if __name__ == "__main__":
         help="benchopt parquet files or sklearn-engine-benchmarks csv files",
     )
 
+    argparser.add_argument(
+        "--check-csv",
+        action="store_true",
+        help="Perform a few sanity checks on a CSV database of k-means benchmark "
+        "results. If this option is passed, then the command only expect a single "
+        "input path to a csv file.",
+    )
+
     args = argparser.parse_args()
-    df_list = []
-    for path in args.benchmark_files:
-        _, file_extension = os.path.splitext(path)
-        if file_extension == ".parquet":
-            df_list.append(_validate_one_parquet_table(path))
-        elif file_extension == ".csv":
-            df_list.append(_validate_one_csv_table(path))
-        else:
+    paths = args.benchmark_files
+    if args.check_csv:
+        if (n_paths := len(paths)) > 1:
             raise ValueError(
-                "Expecting '.csv' or '.parquet' file extensions, but got "
+                "A single input path to a csv file is expected when the --check-csv "
+                f"parameter is passed, but you passed {n_paths - 1} additional "
+                "arguments."
+            )
+        path = paths[0]
+        _, file_extension = os.path.splitext(path)
+        if file_extension != ".csv":
+            raise ValueError(
+                "Expecting a '.csv' file extensions, but got "
                 f"{file_extension} instead !"
             )
 
-    df = _assemble_output_table(*df_list)
-    df.to_csv(sys.stdout, index=False, mode="a")
+        df_loaded = _validate_one_csv_table(path)
+        df_clean = _assemble_output_table(df_loaded)
+        pd.testing.assert_frame_equal(df_loaded, df_clean)
+
+    else:
+        df_list = []
+        for path in paths:
+            _, file_extension = os.path.splitext(path)
+            if file_extension == ".parquet":
+                df_list.append(_validate_one_parquet_table(path))
+            elif file_extension == ".csv":
+                df_list.append(_validate_one_csv_table(path))
+            else:
+                raise ValueError(
+                    "Expecting '.csv' or '.parquet' file extensions, but got "
+                    f"{file_extension} instead !"
+                )
+
+        df = _assemble_output_table(*df_list)
+        df.to_csv(sys.stdout, index=False, mode="a", date_format=DATES_FORMAT)
