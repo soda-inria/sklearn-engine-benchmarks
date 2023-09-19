@@ -212,7 +212,7 @@ def _validate_one_csv_table(path, parse_dates=True):
         index_col=False,
         na_values={col: NA_VALUES for col in COLUMNS_WITH_NONE_STRING},
         keep_default_na=False,
-    )
+    )[TABLE_DISPLAY_ORDER]
 
     if parse_dates:
         df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT)
@@ -362,7 +362,7 @@ if __name__ == "__main__":
     args = argparser.parse_args()
 
     paths = args.benchmark_files
-    if (check_csv := args.check_csv) or (gspread_sync := args.sync_to_gspread):
+    if (check_csv := args.check_csv) or args.sync_to_gspread:
         if (n_paths := len(paths)) > 1:
             command = "--check-csv" if check_csv else "--sync-to-gspread"
             raise ValueError(
@@ -384,7 +384,7 @@ if __name__ == "__main__":
         df_clean = _assemble_output_table(df_loaded)
         pd.testing.assert_frame_equal(df_loaded, df_clean)
 
-    if gspread_sync:
+    if gspread_sync := args.sync_to_gspread:
         if (gspread_url := args.gspread_url) is None:
             raise ValueError(
                 "Please provide a URL to a google spreadsheet using the "
