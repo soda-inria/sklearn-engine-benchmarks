@@ -1,0 +1,29 @@
+name: Synchronize k-means benchmark result file with a google sheet
+
+on:
+  push:
+    branches: main
+    paths: benchmarks/kmeans/results.csv
+
+jobs:
+  sync_kmeans_benchmark_result_file_with_gsheet:
+    name: Run synchronization script
+    needs: kmeans_benchmarks_file_sanity_check
+    runs-on: ubuntu-latest
+    environment: Publish
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install pre-requisites
+      run: pip install numpy pandas gspread
+
+    - name: Synchronize the worksheet
+      env:
+        GSPREAD_SERVICE_ACCOUNT_AUTH_KEY: ${{secrets.GSPREAD_SERVICE_ACCOUNT_AUTH_KEY}}
+        GSPREAD_URL: ${{vars.GSPREAD_URL}}
+      run: |
+        echo "$GSPREAD_SERVICE_ACCOUNT_AUTH_KEY" > service_account.json
+        python ./benchmarks/kmeans/consolidate_results_csv.py ./benchmarks/kmeans/results.csv \
+          --sync-to-gspread --gspread-url $GSPREAD_URL --gspread-auth-key ./service_account.json

@@ -1,8 +1,11 @@
 import hashlib
+from operator import attrgetter
 
 import numpy as np
 import pandas as pd
 from pandas.io.parsers.readers import STR_NA_VALUES
+
+GOOGLE_WORKSHEET_NAME = "k-means"
 
 DATES_FORMAT = "%Y-%m-%d"
 
@@ -58,13 +61,13 @@ TABLE_DISPLAY_ORDER = [
     BACKEND_PROVIDER,
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
-    RESULT_NB_ITERATIONS,
-    RESULT_INERTIA,
     PLATFORM,
-    DATA_RANDOM_STATE,
-    SOLVER_RANDOM_STATE,
     RUN_DATE,
     COMMENT,
+    RESULT_NB_ITERATIONS,
+    RESULT_INERTIA,
+    DATA_RANDOM_STATE,
+    SOLVER_RANDOM_STATE,
 ]
 
 COLUMNS_DTYPES = {
@@ -198,7 +201,7 @@ def _validate_one_parquet_table(path):
     return df
 
 
-def _validate_one_csv_table(path):
+def _validate_one_csv_table(path, parse_dates=True):
     NA_VALUES = set(STR_NA_VALUES)
     NA_VALUES.discard("None")
 
@@ -211,7 +214,9 @@ def _validate_one_csv_table(path):
         keep_default_na=False,
     )
 
-    df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT)
+    if parse_dates:
+        df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT)
+
     return df
 
 
@@ -227,6 +232,75 @@ def _assemble_output_table(*df_list):
     )
     df.drop_duplicates(subset=UNIQUE_BENCHMARK_KEY, inplace=True, ignore_index=True)
     return df
+
+
+def _gspread_sync(path, gspread_url, gspread_auth_key):
+    import gspread
+
+    df = _validate_one_csv_table(path, parse_dates=False)
+
+    n_rows, n_cols = df.shape
+    walltime_worksheet_col = df.columns.get_loc(WALLTIME) + 1
+
+    gs = gspread.service_account(gspread_auth_key)
+    sheet = gs.open_by_url(gspread_url)
+
+    try:
+        worksheet = sheet.worksheet(GOOGLE_WORKSHEET_NAME)
+        worksheet.clear()
+        worksheet.clear_basic_filter()
+        worksheet.freeze(0, 0)
+        worksheet.resize(rows=n_rows + 1, cols=n_cols)
+    except gspread.WorksheetNotFound:
+        worksheet = sheet.add_worksheet(
+            GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
+        )
+        # ensure worksheets are sorted alphabetically
+        sheet.reorder_worksheets(sorted(sheet.worksheets(), key=attrgetter("title")))
+
+    # upload all values
+    worksheet.update(
+        values=[df.columns.values.tolist()] + df.values.tolist(), range_name="A1"
+    )
+
+    # set filter
+    worksheet.set_basic_filter(1, 1, n_rows + 1, n_cols)
+
+    # freeze filter rows and benchmark-defining cols
+    worksheet.freeze(rows=1, cols=walltime_worksheet_col)
+
+    # Text is centerd and wrapped in all cells
+    global_format = dict(
+        horizontalAlignment="CENTER",
+        verticalAlignment="MIDDLE",
+        wrapStrategy="WRAP",
+    )
+    global_range = (
+        f"{gspread.utils.rowcol_to_a1(1, 1)}:"
+        f"{gspread.utils.rowcol_to_a1(n_rows + 1, n_cols)}"
+    )
+    worksheet.format(global_range, global_format)
+
+    # benchmark_id and walltime columns are bold
+    bold_format = dict(textFormat=dict(bold=True))
+    benchmark_id_col_range = (
+        f"{gspread.utils.rowcol_to_a1(2, 1)}:"
+        f"{gspread.utils.rowcol_to_a1(n_rows + 1, 1)}"
+    )
+    walltime_col_range = (
+        f"{gspread.utils.rowcol_to_a1(2, walltime_worksheet_col)}:"
+        f"{gspread.utils.rowcol_to_a1(n_rows + 1, walltime_worksheet_col)}"
+    )
+    worksheet.batch_format(
+        [
+            dict(range=benchmark_id_col_range, format=bold_format),
+            dict(range=walltime_col_range, format=bold_format),
+        ]
+    )
+
+    # auto-resize rows and cols
+    worksheet.columns_auto_resize(0, n_cols - 1)
+    worksheet.rows_auto_resize(0, n_rows)
 
 
 if __name__ == "__main__":
@@ -260,20 +334,45 @@ if __name__ == "__main__":
         "--check-csv",
         action="store_true",
         help="Perform a few sanity checks on a CSV database of k-means benchmark "
-        "results. If this option is passed, then the command only expect a single "
+        "results. If this option is passed, then the command only expects a single "
         "input path to a csv file.",
     )
 
+    argparser.add_argument(
+        "--sync-to-gspread",
+        action="store_true",
+        help="Synchronize a CSV database of k-means benchmark results to a google "
+        "spreadsheet and format it nicely. If this option is passed, then the command "
+        "only expects a single input path to a csv file, and also requires "
+        "--gspread-url and --gspread-auth-key.",
+    )
+
+    argparser.add_argument(
+        "--gspread-url",
+        help="URL to a google spreadsheet. Expected if and only if --sync-to-gspread "
+        "is passed.",
+    )
+
+    argparser.add_argument(
+        "--gspread-auth-key",
+        help="Path to a json authentication key for a gspread service account. "
+        "Expected if and only if --sync-to-gspread is passed.",
+    )
+
     args = argparser.parse_args()
+
     paths = args.benchmark_files
-    if args.check_csv:
+    if (check_csv := args.check_csv) or (gspread_sync := args.sync_to_gspread):
         if (n_paths := len(paths)) > 1:
+            command = "--check-csv" if check_csv else "--sync-to-gspread"
             raise ValueError(
-                "A single input path to a csv file is expected when the --check-csv "
+                f"A single input path to a csv file is expected when the {command} "
                 f"parameter is passed, but you passed {n_paths - 1} additional "
                 "arguments."
             )
         path = paths[0]
+
+    if check_csv:
         _, file_extension = os.path.splitext(path)
         if file_extension != ".csv":
             raise ValueError(
@@ -285,7 +384,23 @@ if __name__ == "__main__":
         df_clean = _assemble_output_table(df_loaded)
         pd.testing.assert_frame_equal(df_loaded, df_clean)
 
-    else:
+    if gspread_sync:
+        if (gspread_url := args.gspread_url) is None:
+            raise ValueError(
+                "Please provide a URL to a google spreadsheet using the "
+                "--gspread-url parameter."
+            )
+
+        if (gspread_auth_key := args.gspread_auth_key) is None:
+            raise ValueError(
+                "Please use the --gspread-auth-key parameter to pass a json "
+                "authentication key for a service account from the google developer "
+                "console."
+            )
+
+        _gspread_sync(path, gspread_url, gspread_auth_key)
+
+    if not check_csv and not gspread_sync:
         df_list = []
         for path in paths:
             _, file_extension = os.path.splitext(path)
