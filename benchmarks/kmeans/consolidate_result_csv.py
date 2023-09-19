@@ -26,6 +26,7 @@ BENCHMARK_DEFINING_COLUMNS = [
     "objective_objective_param_random_state",
     "objective_objective_param_sample_weight",
 ]
+
 BENCHMARK_DEFINING_COLUMNS = sorted(BENCHMARK_DEFINING_COLUMNS)
 _benchmark_defining_columns_identifier = "".join(sorted(BENCHMARK_DEFINING_COLUMNS))
 
@@ -41,6 +42,12 @@ NB_CLUSTERS = "Nb clusters"
 NB_DATA_FEATURES = "Nb data features"
 NB_DATA_SAMPLES = "Nb data samples"
 PLATFORM = "Platform"
+PLATFORM_ARCHITECTURE = "Platform architecture"
+PLATFORM_RELEASE = "Platform release"
+SYSTEM_CPUS = "Nb cpus"
+SYSTEM_PROCESSOR = "Cpu name"
+SYSTEM_RAM = "RAM (GB)"
+SYSTEM_GPU = "Gpu name"
 RESULT_NB_ITERATIONS = "Result nb iterations"
 RESULT_INERTIA = "Result inertia"
 RUN_DATE = "Run date"
@@ -61,7 +68,13 @@ TABLE_DISPLAY_ORDER = [
     BACKEND_PROVIDER,
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
+    SYSTEM_CPUS,
+    SYSTEM_PROCESSOR,
+    SYSTEM_GPU,
+    SYSTEM_RAM,
     PLATFORM,
+    PLATFORM_ARCHITECTURE,
+    PLATFORM_RELEASE,
     RUN_DATE,
     COMMENT,
     RESULT_NB_ITERATIONS,
@@ -85,6 +98,12 @@ COLUMNS_DTYPES = {
     RESULT_NB_ITERATIONS: np.int64,
     RESULT_INERTIA: np.float64,
     PLATFORM: str,
+    PLATFORM_ARCHITECTURE: str,
+    PLATFORM_RELEASE: str,
+    SYSTEM_CPUS: np.int64,
+    SYSTEM_PROCESSOR: str,
+    SYSTEM_GPU: str,
+    SYSTEM_RAM: np.int64,
     DATA_RANDOM_STATE: np.int64,
     SOLVER_RANDOM_STATE: np.int64,
     RUN_DATE: str,
@@ -107,6 +126,9 @@ UNIQUE_BENCHMARK_KEY = [
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
     PLATFORM,
+    PLATFORM_ARCHITECTURE,
+    SYSTEM_CPUS,
+    SYSTEM_GPU,
     DATA_RANDOM_STATE,
     SOLVER_RANDOM_STATE,
 ]
@@ -125,7 +147,13 @@ ROW_SORT_ORDER = [
     (COMPUTE_RUNTIME, True),
     (RESULT_NB_ITERATIONS, True),
     (RESULT_INERTIA, False),
+    (SYSTEM_GPU, True),
+    (SYSTEM_CPUS, True),
     (PLATFORM, True),
+    (PLATFORM_ARCHITECTURE, True),
+    (PLATFORM_RELEASE, True),
+    (SYSTEM_PROCESSOR, True),
+    (SYSTEM_RAM, True),
     (DATA_RANDOM_STATE, True),
     (SOLVER_RANDOM_STATE, True),
     (RUN_DATE, False),
@@ -134,7 +162,7 @@ ROW_SORT_ORDER = [
 ]
 _row_sort_by, _row_sort_ascending = map(list, zip(*ROW_SORT_ORDER))
 
-TABLE_DISPLAY_MAPPING = dict(
+PARQUET_TABLE_DISPLAY_MAPPING = dict(
     time=WALLTIME,
     objective_value=RESULT_INERTIA,
     objective_n_iter=RESULT_NB_ITERATIONS,
@@ -154,16 +182,16 @@ TABLE_DISPLAY_MAPPING = dict(
     platform=PLATFORM,
 )
 
-TABLE_DISPLAY_MAPPING.update(
+PARQUET_TABLE_DISPLAY_MAPPING.update(
     {
-        "platform-architecture": "Platform architecture",
-        "platform-release": "Platform release",
-        "system-cpus": "Nb cpus",
-        "system-processor": "Cpu name",
-        "system-ram (GB)": "RAM (GB)",
+        "platform-architecture": PLATFORM_ARCHITECTURE,
+        "platform-release": PLATFORM_RELEASE,
+        "system-cpus": SYSTEM_CPUS,
+        "system-processor": SYSTEM_PROCESSOR,
+        "system-ram (GB)": SYSTEM_RAM,
     }
 )
-_all_table_columns = list(TABLE_DISPLAY_MAPPING) + [BENCHMARK_ID_NAME]
+_all_table_columns = list(PARQUET_TABLE_DISPLAY_MAPPING) + [BENCHMARK_ID_NAME]
 
 ALL_EXPECTED_COLUMNS = set(BENCHMARK_DEFINING_COLUMNS + _all_table_columns)
 
@@ -197,11 +225,11 @@ def _validate_one_parquet_table(path):
     )
 
     df = df[_all_table_columns]
-    df.rename(columns=TABLE_DISPLAY_MAPPING, inplace=True, errors="raise")
+    df.rename(columns=PARQUET_TABLE_DISPLAY_MAPPING, inplace=True, errors="raise")
     return df
 
 
-def _validate_one_csv_table(path, parse_dates=True):
+def _validate_one_csv_table(path, parse_dates=True, order_columns=True):
     NA_VALUES = set(STR_NA_VALUES)
     NA_VALUES.discard("None")
 
@@ -212,7 +240,10 @@ def _validate_one_csv_table(path, parse_dates=True):
         index_col=False,
         na_values={col: NA_VALUES for col in COLUMNS_WITH_NONE_STRING},
         keep_default_na=False,
-    )[TABLE_DISPLAY_ORDER]
+    )
+
+    if order_columns:
+        df = df[TABLE_DISPLAY_ORDER]
 
     if parse_dates:
         df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT)
@@ -220,7 +251,55 @@ def _validate_one_csv_table(path, parse_dates=True):
     return df
 
 
-def _assemble_output_table(*df_list):
+def _assemble_output_table(
+    dfs_from_csv, dfs_from_parquet, parquet_gpu_name, create_gpu_entry, list_known_gpus
+):
+
+    if not list_known_gpus and (len(dfs_from_parquet) == 0):
+        if parquet_gpu_name is not None:
+            parameter_name = (
+                "--parquet-gpu-name" if parquet_gpu_name else "--no-parquet-gpu-name"
+            )
+            raise ValueError(
+                f"The parameter {parameter_name} should only be used if at least one "
+                "benchopt parquet table is being consolidated, but only got csv tables."
+            )
+        if create_gpu_entry is not False:
+            raise ValueError(
+                "The parameter --create-gpu-entry should only be used if at least one "
+                "benchopt parquet table is being consolidated, but got only csv tables."
+            )
+    elif not list_known_gpus and parquet_gpu_name is None:
+        raise ValueError(
+            "Please use the --parquet-gpu-name parameter to provide a gpu name that "
+            "will be added to the metadata of the samples in the input parquet tables "
+            "or use the --no-parquet-gpu-name if you intend to leave the corresponding "
+            "field empty."
+        )
+
+    else:
+        gpu_names_from_csv = set(
+            gpu_name for df in dfs_from_csv for gpu_name in df[SYSTEM_GPU]
+        )
+
+        if list_known_gpus:
+            print("\n".join(gpu_names_from_csv))
+            return False
+
+        if (parquet_gpu_name not in gpu_names_from_csv) and not create_gpu_entry:
+            raise IndexError(
+                f"The gpu name f{parquet_gpu_name} is unknown. Please use the "
+                "--new-gpu-entry parameter to confirm the addition of the new gpu "
+                "entry in the output csv table, or use --list-known-gpus parameter to "
+                "print a list of gpus names that have been already registered and use "
+                "one of those to bypass this error."
+            )
+
+        for df in dfs_from_parquet:
+            df[SYSTEM_GPU] = parquet_gpu_name
+
+    df_list = dfs_from_csv + dfs_from_parquet
+
     if len(df_list) > 1:
         df = pd.concat(df_list, ignore_index=True, copy=False)
     else:
@@ -359,7 +438,40 @@ if __name__ == "__main__":
         "Expected if and only if --sync-to-gspread is passed.",
     )
 
+    argparser.add_argument(
+        "--parquet-gpu-name",
+        help="Name of the GPU on the host that runs the benchmarks that are recorded "
+        "in the input parquet files.",
+    )
+
+    argparser.add_argument(
+        "--no-parquet-gpu-name",
+        action="store_true",
+        help="Do not insert a GPU name in the metadata of the benchmark samples that "
+        "were recorded in the input parquet files (and leave it blank).",
+    )
+
+    argparser.add_argument(
+        "--new-gpu-entry",
+        action="store_true",
+        help="Use this parameter along with --parquet-gpu-name to confirm that if the "
+        "GPU name is not yet known in the existing databases, it will be added to the "
+        "list of known GPU names. Else the command will throw an error.",
+    )
+
+    argparser.add_argument(
+        "--list-known-gpus",
+        action="store_true",
+        help="Will print a list of the GPU names that are used in CSV benchmark files.",
+    )
+
     args = argparser.parse_args()
+
+    if (parquet_gpu_name := args.parquet_gpu_name) is None and args.no_parquet_gpu_name:
+        parquet_gpu_name = ""
+
+    create_gpu_entry = args.new_gpu_entry
+    list_known_gpus = args.list_known_gpus
 
     paths = args.benchmark_files
     if (check_csv := args.check_csv) or args.sync_to_gspread:
@@ -371,8 +483,6 @@ if __name__ == "__main__":
                 "arguments."
             )
         path = paths[0]
-
-    if check_csv:
         _, file_extension = os.path.splitext(path)
         if file_extension != ".csv":
             raise ValueError(
@@ -380,8 +490,15 @@ if __name__ == "__main__":
                 f"{file_extension} instead !"
             )
 
+    if check_csv:
         df_loaded = _validate_one_csv_table(path)
-        df_clean = _assemble_output_table(df_loaded)
+        df_clean = _assemble_output_table(
+            dfs_from_csv=[df_loaded],
+            dfs_from_parquet=[],
+            parquet_gpu_name=None,
+            create_gpu_entry=False,
+            list_known_gpus=list_known_gpus,
+        )
         pd.testing.assert_frame_equal(df_loaded, df_clean)
 
     if gspread_sync := args.sync_to_gspread:
@@ -397,22 +514,34 @@ if __name__ == "__main__":
                 "authentication key for a service account from the google developer "
                 "console."
             )
-
         _gspread_sync(path, gspread_url, gspread_auth_key)
 
     if not check_csv and not gspread_sync:
-        df_list = []
+        dfs_from_parquet, dfs_from_csv = [], []
         for path in paths:
             _, file_extension = os.path.splitext(path)
             if file_extension == ".parquet":
-                df_list.append(_validate_one_parquet_table(path))
+                if list_known_gpus:
+                    continue
+                dfs_from_parquet.append(_validate_one_parquet_table(path))
             elif file_extension == ".csv":
-                df_list.append(_validate_one_csv_table(path))
+                dfs_from_csv.append(_validate_one_csv_table(path, order_columns=False))
             else:
+                import ipdb
+
+                ipdb.set_trace()
                 raise ValueError(
                     "Expecting '.csv' or '.parquet' file extensions, but got "
                     f"{file_extension} instead !"
                 )
 
-        df = _assemble_output_table(*df_list)
-        df.to_csv(sys.stdout, index=False, mode="a", date_format=DATES_FORMAT)
+        df = _assemble_output_table(
+            dfs_from_csv=dfs_from_csv,
+            dfs_from_parquet=dfs_from_parquet,
+            parquet_gpu_name=parquet_gpu_name,
+            create_gpu_entry=create_gpu_entry,
+            list_known_gpus=list_known_gpus,
+        )
+
+        if df is not False:
+            df.to_csv(sys.stdout, index=False, mode="a", date_format=DATES_FORMAT)

@@ -35,7 +35,7 @@ Results are stored as CSV files in the different benchmark folders of this repos
 but are also easily readable, sortable and filterable in a google spreadsheet available
 [here](https://docs.google.com/spreadsheets/d/1te_3jY6vI4wo3-V7xbmWQai5Mdh5plWdLst2ox0wuLM/edit#gid=1392436075).
 
-The google spreadsheet **is always up to date**, when changes are commited to a file
+The google spreadsheet **is always up to date**, when changes are commited to a CSV file
 and pushed to the main branch of this repository, a github workflow will automatically
 publish the changes to the worksheet accordingly.
 
