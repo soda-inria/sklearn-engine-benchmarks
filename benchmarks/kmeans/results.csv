@@ -1,37 +1,37 @@
-Benchmark id,Dtype,Nb data samples,Nb data features,Nb clusters,Init type,Data sample weights,Walltime,Backend provider,Compute device,Compute runtime,Platform,Run date,Comment,Result nb iterations,Result inertia,Data random state,Solver random state
-59ce435d,float32,10000,14,127,random,None,0.12462177098495886,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,50,51430.75,123,123
-59ce435d,float32,10000,14,127,random,None,0.12604476700653322,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,50,51430.75,123,123
-aa83c989,float32,10000,14,127,random,random,0.10957488301210105,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,45,25189.4296875,123,123
-aa83c989,float32,10000,14,127,random,random,0.11758226700476371,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,45,25189.4296875,123,123
-d7dd03b2,float32,10000,14,127,random,unary,0.11929786199470982,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,50,51430.75,123,123
-d7dd03b2,float32,10000,14,127,random,unary,0.13412014301866293,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,50,51430.75,123,123
-5530a5df,float32,10000,14,127,k-means++,None,0.1864373309945222,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,44,51345.7578125,123,123
-5530a5df,float32,10000,14,127,k-means++,None,0.19395396797335707,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,44,51345.7578125,123,123
-933c67d6,float32,10000,14,127,k-means++,random,0.19890086801024154,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,49,25157.791015625,123,123
-933c67d6,float32,10000,14,127,k-means++,random,0.20760017199791037,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,49,25157.791015625,123,123
-a0238ab4,float32,10000,14,127,k-means++,unary,0.19680037902435288,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,44,51345.7578125,123,123
-a0238ab4,float32,10000,14,127,k-means++,unary,0.20166819798760116,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,44,51345.7578125,123,123
-5a7dc323,float32,1000,14,127,random,None,0.006861614005174488,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,4329.52294921875,123,123
-5a7dc323,float32,1000,14,127,random,None,0.018878906994359568,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,8,4329.52294921875,123,123
-2a972a76,float32,1000,14,127,random,random,0.007878828007960692,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,2043.4871826171875,123,123
-2a972a76,float32,1000,14,127,random,random,0.020564073987770826,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,8,2043.4871826171875,123,123
-acc5517c,float32,1000,14,127,random,unary,0.00892293601646088,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,4329.52294921875,123,123
-acc5517c,float32,1000,14,127,random,unary,0.02023101001395844,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,8,4329.52294921875,123,123
-7f43672f,float32,1000,14,127,k-means++,None,0.04299754198291339,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,9,4209.8798828125,123,123
-7f43672f,float32,1000,14,127,k-means++,None,0.046305063006002456,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,9,4209.8798828125,123,123
-9092da24,float32,1000,14,127,k-means++,random,0.035156091005774215,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,10,1958.2767333984375,123,123
-9092da24,float32,1000,14,127,k-means++,random,0.045090478990459815,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,10,1958.2767333984375,123,123
-03b20198,float32,1000,14,127,k-means++,unary,0.042114737996598706,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,9,4209.8798828125,123,123
-03b20198,float32,1000,14,127,k-means++,unary,0.050245190010173246,sklearn-pytorch-engine,xpu,,Linux,2023-09-19,,9,4209.8798828125,123,123
-998d135c,float64,10000,14,127,random,None,0.16192921201582067,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,50,51430.74722446676,123,123
-3ccf0f3f,float64,10000,14,127,random,random,0.14669514799606986,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,45,25189.42969794898,123,123
-f124e243,float64,10000,14,127,random,unary,0.15990622399840504,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,50,51430.74722446676,123,123
-7212ce6f,float64,10000,14,127,k-means++,None,0.24976161197992042,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,39,51342.45459715595,123,123
-20ed619c,float64,10000,14,127,k-means++,random,0.25957663101144135,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,44,25192.40028772193,123,123
-ffa569d7,float64,10000,14,127,k-means++,unary,0.2414169590047095,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,39,51342.45459715595,123,123
-efa53cc2,float64,1000,14,127,random,None,0.02255263799452223,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,4329.522912418441,123,123
-3b834dcc,float64,1000,14,127,random,random,0.008473554975353181,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,2043.4873126357081,123,123
-80e435f9,float64,1000,14,127,random,unary,0.009603385988157243,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,4329.522912418441,123,123
-bea6db51,float64,1000,14,127,k-means++,None,0.04557400802150369,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,12,4221.268149165037,123,123
-59287206,float64,1000,14,127,k-means++,random,0.040147553983842954,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,8,1986.5108008917205,123,123
-41b21198,float64,1000,14,127,k-means++,unary,0.05088143300963566,sklearn-pytorch-engine,cpu,,Linux,2023-09-19,,12,4221.268149165037,123,123
+Benchmark id,Dtype,Nb data samples,Nb data features,Nb clusters,Init type,Data sample weights,Walltime,Backend provider,Compute device,Compute runtime,Platform,Platform architecture,Platform release,Nb cpus,Cpu name,Gpu name,RAM (GB),Run date,Comment,Result nb iterations,Result inertia,Data random state,Solver random state
+59ce435d,float32,10000,14,127,random,None,0.12462177098495886,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.75,123,123
+59ce435d,float32,10000,14,127,random,None,0.12604476700653322,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.75,123,123
+aa83c989,float32,10000,14,127,random,random,0.10957488301210105,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,45,25189.4296875,123,123
+aa83c989,float32,10000,14,127,random,random,0.11758226700476371,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,45,25189.4296875,123,123
+d7dd03b2,float32,10000,14,127,random,unary,0.11929786199470982,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.75,123,123
+d7dd03b2,float32,10000,14,127,random,unary,0.13412014301866293,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.75,123,123
+5530a5df,float32,10000,14,127,k-means++,None,0.1864373309945222,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,44,51345.7578125,123,123
+5530a5df,float32,10000,14,127,k-means++,None,0.19395396797335707,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,44,51345.7578125,123,123
+933c67d6,float32,10000,14,127,k-means++,random,0.19890086801024154,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,49,25157.791015625,123,123
+933c67d6,float32,10000,14,127,k-means++,random,0.20760017199791037,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,49,25157.791015625,123,123
+a0238ab4,float32,10000,14,127,k-means++,unary,0.19680037902435288,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,44,51345.7578125,123,123
+a0238ab4,float32,10000,14,127,k-means++,unary,0.20166819798760116,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,44,51345.7578125,123,123
+5a7dc323,float32,1000,14,127,random,None,0.006861614005174488,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.52294921875,123,123
+5a7dc323,float32,1000,14,127,random,None,0.018878906994359568,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.52294921875,123,123
+2a972a76,float32,1000,14,127,random,random,0.007878828007960692,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,2043.4871826171875,123,123
+2a972a76,float32,1000,14,127,random,random,0.020564073987770826,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,2043.4871826171875,123,123
+acc5517c,float32,1000,14,127,random,unary,0.00892293601646088,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.52294921875,123,123
+acc5517c,float32,1000,14,127,random,unary,0.02023101001395844,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.52294921875,123,123
+7f43672f,float32,1000,14,127,k-means++,None,0.04299754198291339,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,9,4209.8798828125,123,123
+7f43672f,float32,1000,14,127,k-means++,None,0.046305063006002456,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,9,4209.8798828125,123,123
+9092da24,float32,1000,14,127,k-means++,random,0.035156091005774215,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,10,1958.2767333984375,123,123
+9092da24,float32,1000,14,127,k-means++,random,0.045090478990459815,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,10,1958.2767333984375,123,123
+03b20198,float32,1000,14,127,k-means++,unary,0.042114737996598706,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,9,4209.8798828125,123,123
+03b20198,float32,1000,14,127,k-means++,unary,0.050245190010173246,sklearn-pytorch-engine,xpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,9,4209.8798828125,123,123
+998d135c,float64,10000,14,127,random,None,0.16192921201582067,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.74722446676,123,123
+3ccf0f3f,float64,10000,14,127,random,random,0.14669514799606986,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,45,25189.42969794898,123,123
+f124e243,float64,10000,14,127,random,unary,0.15990622399840504,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,50,51430.74722446676,123,123
+7212ce6f,float64,10000,14,127,k-means++,None,0.24976161197992042,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,39,51342.45459715595,123,123
+20ed619c,float64,10000,14,127,k-means++,random,0.25957663101144135,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,44,25192.40028772193,123,123
+ffa569d7,float64,10000,14,127,k-means++,unary,0.2414169590047095,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,39,51342.45459715595,123,123
+efa53cc2,float64,1000,14,127,random,None,0.02255263799452223,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.522912418441,123,123
+3b834dcc,float64,1000,14,127,random,random,0.008473554975353181,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,2043.4873126357081,123,123
+80e435f9,float64,1000,14,127,random,unary,0.009603385988157243,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,4329.522912418441,123,123
+bea6db51,float64,1000,14,127,k-means++,None,0.04557400802150369,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,12,4221.268149165037,123,123
+59287206,float64,1000,14,127,k-means++,random,0.040147553983842954,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,8,1986.5108008917205,123,123
+41b21198,float64,1000,14,127,k-means++,unary,0.05088143300963566,sklearn-pytorch-engine,cpu,,Linux,x86_64,6.4.12-arch1-1,8,11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz,TigerLake-LP GT2 [Iris Xe Graphics],15,2023-09-19,,12,4221.268149165037,123,123
