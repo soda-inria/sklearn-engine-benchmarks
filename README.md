@@ -11,6 +11,10 @@ all benchmarks that are included in this repository.
 
 ## Scope
 
+The main prospect is measuring and comparing the walltime of different solvers that
+implement the exact same computations using different backends and running on different
+hardware.
+
 Benchmarks are currently available for the following algorithms:
 - [k-means](https://github.com/soda-inria/sklearn-engine-benchmarks/tree/main/benchmarks/kmeans)
 
@@ -34,6 +38,15 @@ but are also easily readable, sortable and filterable in a google spreadsheet av
 The google spreadsheet **is always up to date**, when changes are commited to a file
 and pushed to the main branch of this repository, a github workflow will automatically
 publish the changes to the worksheet accordingly.
+
+Please note that benchmark results should be mostly compared accross rows of the result
+tables that share a same value in the `Benchmark id` column. You can use the filter
+from the google spreadsheet to select only one particular `Benchmark id`. Rows with
+different `Benchmark id` denote benchmark with objective that have different parameters
+(e.g. dataset size, different algorithm optimization options,...). In some cases it can
+however be relevant to compare values accross rows with different `Benchmark id`
+values, for instance to read how the walltime of a given solver scales with the amount
+of input data.
 
 ## Running the benchmarks
 
