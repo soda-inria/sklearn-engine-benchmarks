@@ -105,9 +105,13 @@ class Solver(BaseSolver):
             self.n_iter_ = estimator.n_iter_
 
     def get_result(self):
+        comment = ""
+        if self.device == "cpu":
+            comment = "Not optimized for CPU."
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            comment=comment,
             __name=self.name,
             **self._parameters,
         )

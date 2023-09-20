@@ -27,7 +27,7 @@ class Objective(BaseObjective):
         verbose=[0],  # NB: for kmeans, verbosity can affect the performance
         algorithm=["lloyd"],
         random_state=[123],
-        sample_weight=["None", "unary", "random"],  # ???: defaut ?
+        sample_weight=["None", "random"],
     )
 
     def set_data(self, X, **dataset_parameters):
