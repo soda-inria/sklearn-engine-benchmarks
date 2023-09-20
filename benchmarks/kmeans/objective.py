@@ -12,8 +12,6 @@ class Objective(BaseObjective):
 
     requirements = ["numpy"]
 
-    min_benchopt_version = "1.4.0"
-
     # Since our goal is to measure walltime for solvers that perform exact same
     # computations, the solver parameters are part of the objective and must be set
     # for all solvers, rather than being an independent benchmark space for each
