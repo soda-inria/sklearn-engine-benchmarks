@@ -227,6 +227,9 @@ def _validate_one_parquet_table(source):
 
     df = df[_all_table_columns]
     df.rename(columns=PARQUET_TABLE_DISPLAY_MAPPING, inplace=True, errors="raise")
+
+    df[RUN_DATE] = df[RUN_DATE].astype("datetime64[ns]")
+
     return df
 
 
@@ -247,7 +250,9 @@ def _validate_one_csv_table(source, parse_dates=True, order_columns=True):
         df = df[TABLE_DISPLAY_ORDER]
 
     if parse_dates:
-        df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT)
+        df[RUN_DATE] = pd.to_datetime(df[RUN_DATE], format=DATES_FORMAT).astype(
+            "datetime64[ns]"
+        )
 
     return df
 
@@ -547,9 +552,6 @@ if __name__ == "__main__":
             elif file_extension == ".csv":
                 dfs_from_csv.append(_validate_one_csv_table(path, order_columns=False))
             else:
-                import ipdb
-
-                ipdb.set_trace()
                 raise ValueError(
                     "Expecting '.csv' or '.parquet' file extensions, but got "
                     f"{file_extension} instead !"
