@@ -1,4 +1,5 @@
 import hashlib
+from io import BytesIO
 from operator import attrgetter
 
 import numpy as np
@@ -210,8 +211,8 @@ def _get_sample_id_for_columns(row, defining_colums, constant_identifier):
     )
 
 
-def _validate_one_parquet_table(path):
-    df = pd.read_parquet(path)
+def _validate_one_parquet_table(source):
+    df = pd.read_parquet(source)
 
     # NB: we're lenient on the columns
     for col in ALL_EXPECTED_COLUMNS - set(df.columns):
@@ -229,12 +230,12 @@ def _validate_one_parquet_table(path):
     return df
 
 
-def _validate_one_csv_table(path, parse_dates=True, order_columns=True):
+def _validate_one_csv_table(source, parse_dates=True, order_columns=True):
     NA_VALUES = set(STR_NA_VALUES)
     NA_VALUES.discard("None")
 
     df = pd.read_csv(
-        path,
+        source,
         usecols=TABLE_DISPLAY_ORDER,
         dtype=COLUMNS_DTYPES,
         index_col=False,
@@ -309,14 +310,32 @@ def _assemble_output_table(
     df.sort_values(
         by=_row_sort_by, ascending=_row_sort_ascending, inplace=True, kind="stable"
     )
+    # HACK: sanitize mix of None values and empty strings that can happen when some
+    # columns are missing in the parquet input files (because it's optional and no
+    # solver returns it in the batch) by passing the data to CSV and re-loading
+    # again from CSV
+    df = _sanitize_df_with_tocsv(df)
+
     df.drop_duplicates(subset=UNIQUE_BENCHMARK_KEY, inplace=True, ignore_index=True)
+
     return df
 
 
-def _gspread_sync(path, gspread_url, gspread_auth_key):
+def _sanitize_df_with_tocsv(df):
+    in_memory_buffer = BytesIO()
+    _df_to_csv(df, in_memory_buffer)
+    in_memory_buffer.seek(0)
+    return _validate_one_csv_table(in_memory_buffer, order_columns=False)
+
+
+def _df_to_csv(df, target):
+    df.to_csv(target, index=False, mode="a", date_format=DATES_FORMAT)
+
+
+def _gspread_sync(source, gspread_url, gspread_auth_key):
     import gspread
 
-    df = _validate_one_csv_table(path, parse_dates=False)
+    df = _validate_one_csv_table(source, parse_dates=False)
 
     n_rows, n_cols = df.shape
     walltime_worksheet_col = df.columns.get_loc(WALLTIME) + 1
@@ -499,6 +518,7 @@ if __name__ == "__main__":
             create_gpu_entry=False,
             list_known_gpus=list_known_gpus,
         )
+
         pd.testing.assert_frame_equal(df_loaded, df_clean)
 
     if gspread_sync := args.sync_to_gspread:
@@ -544,4 +564,4 @@ if __name__ == "__main__":
         )
 
         if df is not False:
-            df.to_csv(sys.stdout, index=False, mode="a", date_format=DATES_FORMAT)
+            _df_to_csv(df, sys.stdout)
