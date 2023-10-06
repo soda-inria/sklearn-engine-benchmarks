@@ -1,3 +1,5 @@
+from importlib.metadata import version
+
 from benchopt import BaseSolver, safe_import_context
 from benchopt.stopping_criterion import SingleRunCriterion
 
@@ -111,6 +113,7 @@ class Solver(BaseSolver):
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            version_info=f"sklearn-numba-dpex dev; numba-dpex {version('numba-dpex')}",
             comment=comment,
             __name=self.name,
             **self._parameters,

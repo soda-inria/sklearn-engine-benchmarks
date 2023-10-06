@@ -51,6 +51,7 @@ SYSTEM_RAM = "RAM (GB)"
 SYSTEM_GPU = "Gpu name"
 RESULT_NB_ITERATIONS = "Result nb iterations"
 RESULT_INERTIA = "Result inertia"
+VERSION_INFO = "Version info"
 RUN_DATE = "Run date"
 SOLVER_RANDOM_STATE = "Solver random state"
 WALLTIME = "Walltime"
@@ -77,6 +78,7 @@ TABLE_DISPLAY_ORDER = [
     PLATFORM_ARCHITECTURE,
     PLATFORM_RELEASE,
     RUN_DATE,
+    VERSION_INFO,
     COMMENT,
     RESULT_NB_ITERATIONS,
     RESULT_INERTIA,
@@ -107,6 +109,7 @@ COLUMNS_DTYPES = {
     SYSTEM_RAM: np.int64,
     DATA_RANDOM_STATE: np.int64,
     SOLVER_RANDOM_STATE: np.int64,
+    VERSION_INFO: str,
     RUN_DATE: str,
     COMMENT: str,
 }
@@ -128,6 +131,7 @@ UNIQUE_BENCHMARK_KEY = [
     COMPUTE_RUNTIME,
     PLATFORM,
     PLATFORM_ARCHITECTURE,
+    SYSTEM_PROCESSOR,
     SYSTEM_CPUS,
     SYSTEM_GPU,
     DATA_RANDOM_STATE,
@@ -158,6 +162,7 @@ ROW_SORT_ORDER = [
     (DATA_RANDOM_STATE, True),
     (SOLVER_RANDOM_STATE, True),
     (RUN_DATE, False),
+    (VERSION_INFO, False),
     (COMMENT, True),
     (BENCHMARK_ID_NAME, True),
 ]
@@ -179,6 +184,7 @@ PARQUET_TABLE_DISPLAY_MAPPING = dict(
     objective_solver_param_device=COMPUTE_DEVICE,
     objective_solver_param_runtime=COMPUTE_RUNTIME,
     objective_solver_param_comment=COMMENT,
+    objective_solver_param_version_info=VERSION_INFO,
     objective_solver_param_run_date=RUN_DATE,
     platform=PLATFORM,
 )

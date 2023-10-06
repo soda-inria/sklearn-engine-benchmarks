@@ -1,3 +1,5 @@
+from importlib.metadata import version
+
 from benchopt import BaseSolver, safe_import_context
 from benchopt.stopping_criterion import SingleRunCriterion
 
@@ -74,6 +76,7 @@ class Solver(BaseSolver):
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            version_info=f"scikit-learn {version('scikit-learn')}",
             __name=self.name,
-            **self._parameters
+            **self._parameters,
         )

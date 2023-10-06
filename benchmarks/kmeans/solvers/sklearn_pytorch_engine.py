@@ -1,3 +1,5 @@
+from importlib.metadata import PackageNotFoundError, version
+
 from benchopt import BaseSolver, safe_import_context
 from benchopt.stopping_criterion import SingleRunCriterion
 
@@ -105,9 +107,16 @@ class Solver(BaseSolver):
             self.n_iter_ = estimator.n_iter_
 
     def get_result(self):
+        version_info = f"sklearn-pytorch-engine dev; torch {version('torch')}"
+        try:
+            version_info += f"; ipex {version('intel-extension-for-pytorch')}"
+        except PackageNotFoundError:
+            pass
+
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            version_info=version_info,
             __name=self.name,
             **self._parameters,
         )

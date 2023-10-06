@@ -158,6 +158,7 @@ class Solver(BaseSolver):
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            version_info="dev",
             __name=self.name,
             **self._parameters,
         )

@@ -1,3 +1,5 @@
+from importlib.metadata import version
+
 from benchopt import BaseSolver, safe_import_context
 from benchopt.stopping_criterion import SingleRunCriterion
 
@@ -120,7 +122,8 @@ class Solver(BaseSolver):
         return dict(
             inertia=self.inertia_,
             n_iter=self.n_iter_,
+            version_info=f"cuml {version('cuml')}",
             __name=self.name,
-            comment="TODO: check it runs Lloyd",
-            **self._parameters
+            comment="TODO: check it runs Lloyd ?",
+            **self._parameters,
         )
