@@ -8,10 +8,10 @@ on:
 
 env:
   _SCIKIT_LEARN_COMMIT: 2ccfc8c4bdf66db005d7681757b4145842944fb9
-  _BENCHOPT_COMMIT: fc4d7fe6492dacca3d6cb5d512a3a9b3d5f84df5
-  _SKLEARN_NUMBA_DPEX_COMMIT: e6e901757fced52abee8e1750a5f0004d35b0f3e
+  _SKLEARN_NUMBA_DPEX_COMMIT: e7a9c6da4bc16bbaf82a3a6e461decd209e2c910
   _SKLEARN_PYTORCH_ENGINE_COMMIT: e962dea262ba4d6e9873fced395e815a02a17fd0
   _KMEANS_DPCPP_COMMIT: dceaa6418463c7921ba56dfcc80e3aeda0bcd5c3
+  _BENCHOPT_VERSION: ==1.5.1
 
   _ONEAPI_INSTALLER_URL: https://registrationcenter-download.intel.com/akdlm/IRC_NAS/992857b9-624c-45de-9701-f6445d845359
   _ONEAPI_INSTALL_BINARY_NAME: l_BaseKit_p_2023.2.0.49397.sh
@@ -20,52 +20,35 @@ env:
 
 # TODO: setup runners with compatible gpus and also test gpu benchmarks
 jobs:
-  build_scikit_learn_and_benchopt:
-    name: Build scikit-learn and benchopt
+  build_scikit_learn:
+    name: Build scikit-learn
     runs-on: ubuntu-latest
     container: jjerphan/numba_dpex_dev:latest
 
     steps:
-    - name: Cache scikit-learn and benchopt wheels
+    - name: Cache scikit-learn wheel
       id: wheels-cache
       uses: actions/cache@v3
       with:
-        path: |
-          scikit-learn/dist/
-          benchopt/dist/
-        key: sklearn-benchopt-${{ env._SCIKIT_LEARN_COMMIT}}
-
-    - if: ${{ steps.wheels-cache.outputs.cache-hit != 'true' }}
-      name: Install build pre-requisites
-      run: |
-        apt-get update --quiet
-        apt-get install -y build-essential python3-dev
-        pip install cython numpy scipy joblib threadpoolctl build wheel
+        path: scikit-learn/dist/
+        key: sklearn-${{ env._SCIKIT_LEARN_COMMIT}}
 
     - if: ${{ steps.wheels-cache.outputs.cache-hit != 'true' }}
       name: Build scikit-learn
       run: |
-        git clone https://github.com/fcharras/scikit-learn.git -b "feature/engine-api"
+        apt-get update --quiet
+        apt-get install -y build-essential python3-dev
+        pip install cython numpy scipy joblib threadpoolctl build wheel
+        git clone https://github.com/scikit-learn/scikit-learn.git -b "feature/engine-api"
         cd scikit-learn
         git checkout $_SCIKIT_LEARN_COMMIT
         python setup.py bdist_wheel
-
-    # NB: building benchopt from source will not be needed after next benchopt release
-    - if: ${{ steps.wheels-cache.outputs.cache-hit != 'true' }}
-      name: Build benchopt
-      run: |
-        git clone https://github.com/benchopt/benchopt.git -b main
-        cd benchopt
-        git checkout $_BENCHOPT_COMMIT
-        python -m build --wheel --outdir dist/
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
         name: binaries
-        path: |
-          benchopt/dist/
-          scikit-learn/dist/
+        path: scikit-learn*/dist/
         retention-days: 14
 
   build_kmeans_dpcpp:
@@ -121,7 +104,7 @@ jobs:
 
   run_benchmarks_on_cpu:
     name: Run benchmarks
-    needs: [build_scikit_learn_and_benchopt, build_kmeans_dpcpp]
+    needs: [build_scikit_learn, build_kmeans_dpcpp]
     runs-on: ubuntu-latest
     container: jjerphan/numba_dpex_dev:latest
 
@@ -129,7 +112,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: download scikit-learn and benchopt wheels
+    - name: download scikit-learn wheel
       uses: actions/download-artifact@v3
       with:
         name: binaries
@@ -148,7 +131,7 @@ jobs:
         cd ../
         # TODO: it seems that non-editable install of sklearn-numba-dpex doesn't work ?
         # Fix and update the install command here to avoid having to git clone manually
-        pip install ./scikit-learn/dist/*.whl ./benchopt/dist/*.whl scikit-learn-intelex -e ./sklearn-numba-dpex/ -e ./sklearn-pytorch-engine
+        pip install ./scikit-learn/dist/*.whl scikit-learn-intelex -e ./sklearn-numba-dpex/ -e ./sklearn-pytorch-engine benchopt${_BENCHOPT_VERSION}
         pip install torch --index-url https://download.pytorch.org/whl/cpu
 
     - name: Check oneapi default device
