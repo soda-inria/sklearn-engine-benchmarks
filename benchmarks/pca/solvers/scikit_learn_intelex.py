@@ -24,13 +24,14 @@ class Solver(BaseSolver):
     parameters = {
         "device, runtime": [
             ("cpu", "numpy"),
-            ("cpu", "level_zero"),
-            ("cpu", "opencl"),
             ("gpu", "level_zero"),
-            ("gpu", "opencl"),
         ],
-        "svd_solver": ["full", "arpack", "randomized"],
-        "power_iteration_normalizer": ["QR", "LU", "none"],
+        "svd_solver, power_iteration_normalizer": [
+            (svd_solver, power_iteration_normalizer)
+            for svd_solver in ["full", "randomized"]
+            for power_iteration_normalizer in ["LU"]
+        ]
+        + [("arpack", "none")],
     }
 
     stopping_criterion = SingleRunCriterion(1)
@@ -51,22 +52,12 @@ class Solver(BaseSolver):
                     f"This {self.device} device has no support for float64 compute"
                 )
 
-        svd_solver = objective_dict["svd_solver"]
-        power_iteration_normalizer = objective_dict["power_iteration_normalizer"]
-
-        if (svd_solver == "arpack") and power_iteration_normalizer != "none":
-            return True, (
-                "arpack solver expect power iteration normalizer parameter set to "
-                "'none'"
-            )
-
         return False, None
 
     def set_objective(
         self,
         X,
         n_components,
-        whiten,
         tol,
         iterated_power,
         n_oversamples,
@@ -83,10 +74,9 @@ class Solver(BaseSolver):
         else:
             self.X = X.copy()
 
-        self.components = n_components
-        self.whiten = whiten
+        self.n_components = n_components
         self.tol = tol
-        self.iterated_power = self.iterated_power
+        self.iterated_power = iterated_power
         self.n_oversamples = n_oversamples
         self.random_state = random_state
         self.verbose = verbose
@@ -94,8 +84,8 @@ class Solver(BaseSolver):
     def run(self, _):
         estimator = PCA(
             n_components=self.n_components,
-            copy=False,
-            whiten=self.whiten,
+            copy=True,
+            whiten=False,
             svd_solver=self.svd_solver,
             tol=self.tol,
             iterated_power=self.iterated_power,

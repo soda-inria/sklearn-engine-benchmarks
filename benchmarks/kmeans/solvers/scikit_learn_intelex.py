@@ -24,10 +24,7 @@ class Solver(BaseSolver):
     parameters = {
         "device, runtime": [
             ("cpu", "numpy"),
-            ("cpu", "level_zero"),
-            ("cpu", "opencl"),
             ("gpu", "level_zero"),
-            ("gpu", "opencl"),
         ]
     }
 

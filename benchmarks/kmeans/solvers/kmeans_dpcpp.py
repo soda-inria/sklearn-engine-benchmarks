@@ -66,7 +66,7 @@ class Solver(BaseSolver):
         "kmeans_dpcpp",
     ]
 
-    parameters = dict(device=["cpu", "gpu"], runtime=["level_zero", "opencl"])
+    parameters = {"device, runtime": [("cpu", "opencl"), ("gpu", "level_zero")]}
 
     stopping_criterion = SingleRunCriterion(1)
 

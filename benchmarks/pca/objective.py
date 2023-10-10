@@ -15,7 +15,6 @@ class Objective(BaseObjective):
     # solver.
     parameters = dict(
         n_components=[10],
-        whiten=[False],
         tol=[0.0],
         iterated_power=[15],
         n_oversamples=[10],
@@ -57,7 +56,6 @@ class Objective(BaseObjective):
         return dict(
             X=self.X,
             n_components=self.n_components,
-            whiten=self.whiten,
             tol=self.tol,
             iterated_power=self.iterated_power,
             n_oversamples=self.n_oversamples,

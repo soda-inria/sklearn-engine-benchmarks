@@ -39,7 +39,6 @@ class Solver(BaseSolver):
         self,
         X,
         n_components,
-        whiten,
         tol,
         iterated_power,
         n_oversamples,
@@ -54,22 +53,21 @@ class Solver(BaseSolver):
         else:
             self.X = cupy.asarray(X)
 
-        self.components = n_components
-        self.whiten = whiten
+        self.n_components = n_components
         self.tol = tol
 
         # if tol == 0:
         #     tol = 1e-16
         # self.tol = tol
 
-        self.iterated_power = self.iterated_power
+        self.iterated_power = iterated_power
         self.n_oversamples = n_oversamples
         self.random_state = random_state
         self.verbose = verbose
 
     def run(self, _):
         estimator = cuml.PCA(
-            copy=False,
+            copy=True,
             iterated_power=self.iterated_power,
             n_components=self.n_components,
             random_state=self.random_state,
