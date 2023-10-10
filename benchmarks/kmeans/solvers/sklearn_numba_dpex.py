@@ -19,8 +19,7 @@ class Solver(BaseSolver):
     # with the hardware when this solver runs. If a runtime is not available, the
     # corresponding benchmark will be skipped.
     requirements = [
-        "git+https://github.com/soda-inria/sklearn-numba-dpex.git"
-        "@168da1f8c751d4d33eed7c4880f3f734ac1edf0b#egg=sklearn-numba-dpex",
+        "sklearn-numba-dpex",
     ]
 
     parameters = dict(device=["cpu", "gpu"], runtime=["level_zero", "opencl"])

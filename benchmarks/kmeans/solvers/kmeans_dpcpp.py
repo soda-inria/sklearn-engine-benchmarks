@@ -62,8 +62,7 @@ class Solver(BaseSolver):
     # Moreover `kmeans_dpcpp` is expected to be installed from source following
     # special instructions in the README.
     requirements = [
-        "git+https://github.com/soda-inria/sklearn-numba-dpex.git"
-        "@168da1f8c751d4d33eed7c4880f3f734ac1edf0b#egg=sklearn-numba-dpex",
+        "sklearn-numba-dpex",
         "kmeans_dpcpp",
     ]
 

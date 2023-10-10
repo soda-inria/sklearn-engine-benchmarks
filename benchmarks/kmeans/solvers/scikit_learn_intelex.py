@@ -16,13 +16,7 @@ with safe_import_context() as import_ctx:
 class Solver(BaseSolver):
     name = "scikit-learn-intelex"
 
-    # NB: This requirement depends on `numba_dpex`. The user is expected to ensure that
-    # it is installed properly along with the low level-runtime environment compatible
-    # with the hardware when this solver runs. If a runtime is not available, the
-    # corresponding benchmark will be skipped.
     requirements = [
-        "git+https://github.com/soda-inria/sklearn-numba-dpex.git"
-        "@168da1f8c751d4d33eed7c4880f3f734ac1edf0b#egg=sklearn-numba-dpex",
         "scikit-learn-intelex",
         "dpcpp-cpp-rt",
     ]

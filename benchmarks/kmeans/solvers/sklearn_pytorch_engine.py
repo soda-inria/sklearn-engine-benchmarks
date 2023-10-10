@@ -19,10 +19,7 @@ class Solver(BaseSolver):
     # is installed properly for the targeted backend ("cuda", "mps", "xpu", "hip",...)
     # when this solver runs. If a backend is not available, the corresponding
     # benchmark will be skipped.
-    requirements = [
-        "git+https://github.com/soda-inria/sklearn-pytorch-engine.git"
-        "@00ceed1ffe3476de69bc2d8d2dec23e724a41b70#egg=sklearn-pytorch-engine"
-    ]
+    requirements = ["sklearn-pytorch-engine"]
 
     parameters = dict(device=["cpu", "xpu", "cuda", "mps"])
     stopping_criterion = SingleRunCriterion(1)
