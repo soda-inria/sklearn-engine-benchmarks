@@ -1,4 +1,7 @@
 name: Check sanity of benchmark results file
+on:
+  pull_request:
+  push: { branches: main }
 
 
 jobs:
