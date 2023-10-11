@@ -7,7 +7,6 @@ on:
 jobs:
   sync_kmeans_benchmark_result_file_with_gsheet:
     name: Run synchronization script
-    needs: benchmarks_file_sanity_checks
     runs-on: ubuntu-latest
     environment: Publish
 
@@ -23,6 +22,7 @@ jobs:
         GSPREAD_SERVICE_ACCOUNT_AUTH_KEY: ${{secrets.GSPREAD_SERVICE_ACCOUNT_AUTH_KEY}}
         GSPREAD_URL: ${{vars.GSPREAD_URL}}
       run: |
+        python ./benchmarks/kmeans/consolidate_result_csv.py ./benchmarks/kmeans/results.csv --check-csv
         echo "$GSPREAD_SERVICE_ACCOUNT_AUTH_KEY" > service_account.json
         python ./benchmarks/kmeans/consolidate_result_csv.py ./benchmarks/kmeans/results.csv \
           --sync-to-gspread --gspread-url $GSPREAD_URL --gspread-auth-key ./service_account.json
