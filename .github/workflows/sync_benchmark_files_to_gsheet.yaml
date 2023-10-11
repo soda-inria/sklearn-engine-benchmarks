@@ -26,5 +26,3 @@ jobs:
         echo "$GSPREAD_SERVICE_ACCOUNT_AUTH_KEY" > service_account.json
         python ./benchmarks/kmeans/consolidate_result_csv.py ./benchmarks/kmeans/results.csv \
           --sync-to-gspread --gspread-url $GSPREAD_URL --gspread-auth-key ./service_account.json
-        python ./benchmarks/pca/consolidate_result_csv.py ./benchmarks/pca/results.csv \
-          --sync-to-gspread --gspread-url $GSPREAD_URL --gspread-auth-key ./service_account.json
