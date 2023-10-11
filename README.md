@@ -51,15 +51,21 @@ of input data.
 
 ## Running the benchmarks
 
-Please refer to benchopt documentation and tutorials that provide step-by-step guides
-for running the benchmarks from a benchmark file tree, and refer to the documentation
-of the dependencies of the solvers you're interested in running to gather prerequisite
-installation instructions.
+Please refer to [benchopt documentation and tutorials](https://benchopt.github.io/get_started.html)
+that provide step-by-step guides for running the benchmarks from a benchmark file tree,
+and refer to the documentation of the dependencies of the solvers you're interested in
+running to gather prerequisite installation instructions.
+
+Also, the [github workflow](https://github.com/soda-inria/sklearn-engine-benchmarks/tree/main/.github/workflows/test_cpu_benchmarks.yaml)
+in this repository for testing benchmarks on CPU showcases an example of setup of an
+environment along with relevant benchopt commands to start the benchmarks on a dataset
+with custom, smaller dimensions.
 
 ## Contributing
 
-Please refer to benchopt documentation and tutorials that provide step-by-step guides
-if you'd like to add a new implementation for an already existing benchmark.
+Please refer to [benchopt documentation and tutorials](https://benchopt.github.io/tutorials/add_solver.html)
+that provide step-by-step guides if you'd like to add a new implementation for an
+already existing benchmark.
 
 A contribution should contain the following files:
 - a benchopt solver in the `./solvers` folder
