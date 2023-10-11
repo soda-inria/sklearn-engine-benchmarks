@@ -291,16 +291,23 @@ def _assemble_output_table(
 
     else:
         gpu_names_from_csv = set(
-            gpu_name for df in dfs_from_csv for gpu_name in df[SYSTEM_GPU]
+            gpu_name
+            for df in dfs_from_csv
+            for gpu_name in df[SYSTEM_GPU]
+            if (len(gpu_name) > 0)
         )
 
         if list_known_gpus:
             print("\n".join(gpu_names_from_csv))
             return False
 
-        if (parquet_gpu_name not in gpu_names_from_csv) and not create_gpu_entry:
+        if (
+            (len(parquet_gpu_name) > 0)
+            and (parquet_gpu_name not in gpu_names_from_csv)
+            and not create_gpu_entry
+        ):
             raise IndexError(
-                f"The gpu name f{parquet_gpu_name} is unknown. Please use the "
+                f"The gpu name {parquet_gpu_name} is unknown. Please use the "
                 "--new-gpu-entry parameter to confirm the addition of the new gpu "
                 "entry in the output csv table, or use --list-known-gpus parameter to "
                 "print a list of gpus names that have been already registered and use "
