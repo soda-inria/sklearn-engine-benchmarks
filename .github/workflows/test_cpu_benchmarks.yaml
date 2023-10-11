@@ -1,0 +1,143 @@
+name: Run CPU benchmarks on a few data sample
+
+on:
+  pull_request:
+  push: { branches: main }
+  schedule:
+    - cron: '00 00 * * 1'
+
+env:
+  _SCIKIT_LEARN_COMMIT: 2ccfc8c4bdf66db005d7681757b4145842944fb9
+  _SKLEARN_NUMBA_DPEX_COMMIT: e7a9c6da4bc16bbaf82a3a6e461decd209e2c910
+  _SKLEARN_PYTORCH_ENGINE_COMMIT: e962dea262ba4d6e9873fced395e815a02a17fd0
+  _KMEANS_DPCPP_COMMIT: dceaa6418463c7921ba56dfcc80e3aeda0bcd5c3
+  _BENCHOPT_VERSION: ==1.5.1
+
+  _ONEAPI_INSTALLER_URL: https://registrationcenter-download.intel.com/akdlm/IRC_NAS/992857b9-624c-45de-9701-f6445d845359
+  _ONEAPI_INSTALL_BINARY_NAME: l_BaseKit_p_2023.2.0.49397.sh
+  _ONEAPI_COMPONENTS: "intel.oneapi.lin.dpcpp-cpp-compiler:intel.oneapi.lin.mkl.devel"
+
+
+# TODO: setup runners with compatible gpus and also test gpu benchmarks
+jobs:
+  build_scikit_learn:
+    name: Build scikit-learn
+    runs-on: ubuntu-latest
+    container: jjerphan/numba_dpex_dev:latest
+
+    steps:
+    - name: Cache scikit-learn wheel
+      id: wheels-cache
+      uses: actions/cache@v3
+      with:
+        path: scikit-learn/dist/
+        key: sklearn-${{ env._SCIKIT_LEARN_COMMIT}}
+
+    - if: ${{ steps.wheels-cache.outputs.cache-hit != 'true' }}
+      name: Build scikit-learn
+      run: |
+        apt-get update --quiet
+        apt-get install -y build-essential python3-dev
+        pip install cython numpy scipy joblib threadpoolctl build wheel
+        git clone https://github.com/scikit-learn/scikit-learn.git -b "feature/engine-api"
+        cd scikit-learn
+        git checkout $_SCIKIT_LEARN_COMMIT
+        python setup.py bdist_wheel
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        name: binaries
+        path: scikit-learn*/dist/
+        retention-days: 14
+
+  build_kmeans_dpcpp:
+    name: Build kmeans_dpcpp
+    runs-on: ubuntu-latest
+    container: jjerphan/numba_dpex_dev:latest
+
+    steps:
+    - name: Cache kmeans_dpcpp build
+      id: kmeans-dpcpp-cache
+      uses: actions/cache@v3
+      with:
+        path: kmeans_dpcpp/
+        key: kmeans-dpcpp-${{ env._KMEANS_DPCPP_COMMIT}}
+
+    - if: ${{ steps.kmeans-dpcpp-cache.outputs.cache-hit != 'true' }}
+      name: Install build pre-requisites
+      run: |
+        apt-get update --quiet
+        apt-get install -y --no-install-recommends gawk
+        pip install cmake ninja packaging setuptools distro scikit-build numpy
+
+    - if: ${{ steps.kmeans-dpcpp-cache.outputs.cache-hit != 'true' }}
+      name: Install necessary oneapi basekit components
+      run: |
+        mkdir -p ./opt/intel/oneapi $RUNNER_TEMP/intel/cache $RUNNER_TEMP/intel/download $RUNNER_TEMP/intel/log
+        wget -P $RUNNER_TEMP/intel/download $_ONEAPI_INSTALLER_URL/$_ONEAPI_INSTALL_BINARY_NAME
+        chmod +x $RUNNER_TEMP/intel/download/$_ONEAPI_INSTALL_BINARY_NAME
+        $RUNNER_TEMP/intel/download/$_ONEAPI_INSTALL_BINARY_NAME -a -s --eula accept \
+          --action install --components $_ONEAPI_COMPONENTS  \
+          --install-dir ./opt/intel/oneapi --log-dir $RUNNER_TEMP/intel/log \
+          --download-cache $RUNNER_TEMP/intel/cache \
+
+    # HACK: `kmeans_dpcpp` packaging is broken, just run `develop` to build the
+    # C++ extensions, then later on add it explicitly to PYTHONPATH
+    - if: ${{ steps.kmeans-dpcpp-cache.outputs.cache-hit != 'true' }}
+      name: build kmeans_dpcpp
+      shell: bash
+      run: |
+        source ./opt/intel/oneapi/setvars.sh
+        git clone https://github.com/oleksandr-pavlyk/kmeans_dpcpp.git -b main
+        cd kmeans_dpcpp
+        git checkout $_KMEANS_DPCPP_COMMIT
+        python setup.py develop -- -DCMAKE_CXX_COMPILER:PATH=$(which icpx) -DDPCTL_MODULE_PATH=$(python -m dpctl --cmakedir)
+
+    - name: Upload kmeans_dpcpp build files
+      uses: actions/upload-artifact@v3
+      with:
+        name: binaries
+        path: kmeans_dpcpp*/
+        retention-days: 14
+
+
+  run_benchmarks_on_cpu:
+    name: Run benchmarks
+    needs: [build_scikit_learn, build_kmeans_dpcpp]
+    runs-on: ubuntu-latest
+    container: jjerphan/numba_dpex_dev:latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: download scikit-learn wheel
+      uses: actions/download-artifact@v3
+      with:
+        name: binaries
+
+    # TODO: instead of installing all dependencies of all solvers in the same
+    # environment, might be more cautious to have one solver per environment ?
+    - name: install all dependencies
+      run: |
+        git clone https://github.com/soda-inria/sklearn-numba-dpex.git -b main
+        cd sklearn-numba-dpex
+        git checkout $_SKLEARN_NUMBA_DPEX_COMMIT
+        cd ../
+        git clone https://github.com/soda-inria/sklearn-pytorch-engine.git -b main
+        cd sklearn-pytorch-engine
+        git checkout $_SKLEARN_PYTORCH_ENGINE_COMMIT
+        cd ../
+        # TODO: it seems that non-editable install of sklearn-numba-dpex doesn't work ?
+        # Fix and update the install command here to avoid having to git clone manually
+        pip install ./scikit-learn/dist/*.whl scikit-learn-intelex -e ./sklearn-numba-dpex/ -e ./sklearn-pytorch-engine benchopt${_BENCHOPT_VERSION}
+        pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+    - name: Check oneapi default device
+      run: python -c "import dpctl; dpctl.select_default_device().print_device_info()"
+
+    - name: Run k-means benchmarks
+      run: |
+        cd benchmarks/kmeans
+        PYTHONPATH=$PYTHONPATH:$(realpath ./kmeans_dpcpp/) benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=1000,n_features=14]
