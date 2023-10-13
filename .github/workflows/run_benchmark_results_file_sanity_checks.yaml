@@ -18,3 +18,4 @@ jobs:
     - name: Check sanity of benchmark files
       run: |
         python ./benchmarks/kmeans/consolidate_result_csv.py ./benchmarks/kmeans/results.csv --check-csv
+        python ./benchmarks/pca/consolidate_result_csv.py ./benchmarks/pca/results.csv --check-csv

@@ -54,7 +54,7 @@ class Solver(BaseSolver):
         device = self.device
         # Copy the data before running the benchmark to ensure that no unfortunate side
         # effects can happen
-        self.X = torch.asarray(X, copy=True, device=self.device)
+        self.X = torch.asarray(X, copy=True, device=device)
 
         if hasattr(sample_weight, "copy"):
             sample_weight = torch.asarray(sample_weight, copy=True, device=device)
