@@ -9,7 +9,7 @@ class Dataset(BaseDataset):
     name = "Simulated_correlated_data"
 
     parameters = {
-        "n_samples, n_features": [(1_000_000, 100), (10_000, 10_000)],
+        "n_samples, n_features": [(20_000_000, 100), (15_000, 15_000)],
         "dtype": ["float32"],
         "random_state": [123],
     }

@@ -37,6 +37,7 @@ DTYPE = "Dtype"
 NB_COMPONENTS = "Nb components"
 NB_DATA_FEATURES = "Nb data features"
 NB_DATA_SAMPLES = "Nb data samples"
+ITERATED_POWER = "Iterated power"
 SVD_SOLVER = "SVD solver"
 POWER_ITERATION_NORMALIZER = "Power iteration normalizer"
 PLATFORM = "Platform"
@@ -65,6 +66,7 @@ TABLE_DISPLAY_ORDER = [
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
     SVD_SOLVER,
+    ITERATED_POWER,
     POWER_ITERATION_NORMALIZER,
     SYSTEM_CPUS,
     SYSTEM_PROCESSOR,
@@ -93,6 +95,7 @@ COLUMNS_DTYPES = {
     COMPUTE_RUNTIME: str,
     SUM_OF_EXPLAINED_VARIANCE_RATIO: np.float64,
     SVD_SOLVER: str,
+    ITERATED_POWER: str,
     POWER_ITERATION_NORMALIZER: str,
     PLATFORM: str,
     PLATFORM_ARCHITECTURE: str,
@@ -120,6 +123,7 @@ UNIQUE_BENCHMARK_KEY = [
     NB_COMPONENTS,
     BACKEND_PROVIDER,
     SVD_SOLVER,
+    ITERATED_POWER,
     POWER_ITERATION_NORMALIZER,
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
@@ -143,6 +147,7 @@ ROW_SORT_ORDER = [
     (COMPUTE_DEVICE, True),
     (COMPUTE_RUNTIME, True),
     (SVD_SOLVER, True),
+    (ITERATED_POWER, True),
     (POWER_ITERATION_NORMALIZER, True),
     (SUM_OF_EXPLAINED_VARIANCE_RATIO, False),
     (SYSTEM_GPU, True),
@@ -173,8 +178,9 @@ PARQUET_TABLE_DISPLAY_MAPPING = dict(
     objective_solver_param___name=BACKEND_PROVIDER,
     objective_solver_param_device=COMPUTE_DEVICE,
     objective_solver_param_runtime=COMPUTE_RUNTIME,
-    objective_objective_param_power_iteration_normalizer=POWER_ITERATION_NORMALIZER,
-    objective_objective_param_power_svd_solver=SVD_SOLVER,
+    objective_solver_param_power_iteration_normalizer=POWER_ITERATION_NORMALIZER,
+    objective_solver_param_iterated_power=ITERATED_POWER,
+    objective_solver_param_svd_solver=SVD_SOLVER,
     objective_solver_param_comment=COMMENT,
     objective_solver_param_version_info=VERSION_INFO,
     objective_solver_param_run_date=RUN_DATE,

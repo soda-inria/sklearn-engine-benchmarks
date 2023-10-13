@@ -32,6 +32,7 @@ class Solver(BaseSolver):
         ]
         + [("arpack", "none")],
         "device": ["cpu", "xpu", "cuda", "mps"],
+        "iterated_power": ["auto"],
     }
 
     stopping_criterion = SingleRunCriterion(1)

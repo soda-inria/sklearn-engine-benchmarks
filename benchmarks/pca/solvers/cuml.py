@@ -16,6 +16,7 @@ class Solver(BaseSolver):
     parameters = dict(
         device=["gpu"],
         svd_solver=["full", "jacobi"],
+        iterated_power=[15],
     )
 
     stopping_criterion = SingleRunCriterion(1)
@@ -73,7 +74,7 @@ class Solver(BaseSolver):
             random_state=self.random_state,
             svd_solver=self.svd_solver,
             tol=self.tol,
-            whiten=self.whiten,
+            whiten=False,
         ).fit(self.X, y=None)
 
         self.explained_variance_ratio_ = estimator.explained_variance_ratio_

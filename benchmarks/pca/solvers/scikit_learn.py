@@ -17,7 +17,8 @@ class Solver(BaseSolver):
             for svd_solver in ["full", "randomized"]
             for power_iteration_normalizer in ["LU"]
         ]
-        + [("arpack", "none")]
+        + [("arpack", "none")],
+        "iterated_power": ["auto"],
     }
 
     stopping_criterion = SingleRunCriterion(1)

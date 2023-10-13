@@ -32,6 +32,7 @@ class Solver(BaseSolver):
             for power_iteration_normalizer in ["LU"]
         ]
         + [("arpack", "none")],
+        "iterated_power": ["auto"],
     }
 
     stopping_criterion = SingleRunCriterion(1)
