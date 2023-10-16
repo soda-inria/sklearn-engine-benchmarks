@@ -27,7 +27,7 @@ class Solver(BaseSolver):
     parameters = {
         "svd_solver, power_iteration_normalizer": [
             ("full", ""),
-            ("randomized", "AR"),
+            ("randomized", "QR"),
         ],
         "device": ["cpu", "xpu", "cuda", "mps"],
         "iterated_power": ["auto"],
@@ -81,6 +81,10 @@ class Solver(BaseSolver):
         self.verbose = verbose
 
     def run(self, _):
+        power_iteration_normalizer = self.power_iteration_normalizer
+        if power_iteration_normalizer == "":
+            power_iteration_normalizer = "auto"
+
         with config_context(array_api_dispatch=True):
             estimator = PCA(
                 n_components=self.n_components,
