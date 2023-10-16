@@ -1,5 +1,6 @@
 import hashlib
 from io import BytesIO
+from itertools import zip_longest
 from operator import attrgetter
 
 import numpy as np
@@ -425,19 +426,19 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
     # Every other benchmark_id has greyed background
     gainsboro_background = dict(
         backgroundColorStyle=dict(
-            rgbColor=dict(red=220 / 255, green=220 / 255, blue=220 / 255, alpha=1)
+            rgbColor=dict(red=232 / 255, green=233 / 255, blue=235 / 255, alpha=1)
         )
     )
     benchmark_ids = df[BENCHMARK_ID_NAME]
-    benchmark_ids_ending_idx = np.where(
-        (benchmark_ids.shift() != benchmark_ids).values[1:] + 1
+    benchmark_ids_ending_idx = (
+        np.where((benchmark_ids.shift() != benchmark_ids).values[1:])[0] + 2
     )
-    for benchmark_id_range_start, benchmark_id_range_end in zip(
+    for benchmark_id_range_start, benchmark_id_range_end in zip_longest(
         *(iter(benchmark_ids_ending_idx),) * 2
     ):
         benchmark_row_range = (
             f"{gspread.utils.rowcol_to_a1(benchmark_id_range_start + 1, 1)}:"
-            f"{gspread.utils.rowcol_to_a1(benchmark_id_range_end, n_cols)}"
+            f"{gspread.utils.rowcol_to_a1(benchmark_id_range_end or (n_rows + 1), n_cols)}"  # noqa
         )
         format_queries.append(
             dict(range=benchmark_row_range, format=gainsboro_background)
