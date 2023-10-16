@@ -94,7 +94,7 @@ class Solver(BaseSolver):
                 tol=self.tol,
                 iterated_power=self.iterated_power,
                 n_oversamples=self.n_oversamples,
-                power_iteration_normalizer=self.power_iteration_normalizer,
+                power_iteration_normalizer=power_iteration_normalizer,
                 random_state=self.random_state,
             ).fit(self.X, y=None)
 
