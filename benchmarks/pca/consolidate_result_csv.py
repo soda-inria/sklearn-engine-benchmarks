@@ -424,7 +424,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
     format_queries.append(dict(range=header_row_range, format=yellow_lighter_header))
 
     # Every other benchmark_id has greyed background
-    gainsboro_background = dict(
+    bright_gray_background = dict(
         backgroundColorStyle=dict(
             rgbColor=dict(red=232 / 255, green=233 / 255, blue=235 / 255, alpha=1)
         )
@@ -441,7 +441,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
             f"{gspread.utils.rowcol_to_a1(benchmark_id_range_end or (n_rows + 1), n_cols)}"  # noqa
         )
         format_queries.append(
-            dict(range=benchmark_row_range, format=gainsboro_background)
+            dict(range=benchmark_row_range, format=bright_gray_background)
         )
 
     # Apply formats
