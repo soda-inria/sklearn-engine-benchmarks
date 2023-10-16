@@ -383,6 +383,8 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
     # freeze filter rows and benchmark-defining cols
     worksheet.freeze(rows=1, cols=walltime_worksheet_col)
 
+    format_queries = []
+
     # Text is centerd and wrapped in all cells
     global_format = dict(
         horizontalAlignment="CENTER",
@@ -393,7 +395,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         f"{gspread.utils.rowcol_to_a1(1, 1)}:"
         f"{gspread.utils.rowcol_to_a1(n_rows + 1, n_cols)}"
     )
-    worksheet.format(global_range, global_format)
+    format_queries.append(dict(range=global_range, format=global_format))
 
     # benchmark_id and walltime columns are bold
     bold_format = dict(textFormat=dict(bold=True))
@@ -405,12 +407,44 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         f"{gspread.utils.rowcol_to_a1(2, walltime_worksheet_col)}:"
         f"{gspread.utils.rowcol_to_a1(n_rows + 1, walltime_worksheet_col)}"
     )
-    worksheet.batch_format(
-        [
-            dict(range=benchmark_id_col_range, format=bold_format),
-            dict(range=walltime_col_range, format=bold_format),
-        ]
+    format_queries.append(dict(range=benchmark_id_col_range, format=bold_format))
+    format_queries.append(dict(range=walltime_col_range, format=bold_format))
+
+    # Header is light-ish yellow
+    yellow_lighter_header = dict(
+        backgroundColorStyle=dict(
+            rgbColor=dict(red=1, green=1, blue=102 / 255, alpha=1)
+        )
     )
+    header_row_range = (
+        f"{gspread.utils.rowcol_to_a1(1, 1)}:"
+        f"{gspread.utils.rowcol_to_a1(1, n_cols)}"
+    )
+    format_queries.append(dict(range=header_row_range, format=yellow_lighter_header))
+
+    # Every other benchmark_id has greyed background
+    gainsboro_background = dict(
+        backgroundColorStyle=dict(
+            rgbColor=dict(red=220 / 255, green=220 / 255, blue=220 / 255, alpha=1)
+        )
+    )
+    benchmark_ids = df[BENCHMARK_ID_NAME]
+    benchmark_ids_ending_idx = np.where(
+        (benchmark_ids.shift() != benchmark_ids).values[1:] + 1
+    )
+    for benchmark_id_range_start, benchmark_id_range_end in zip(
+        *(iter(benchmark_ids_ending_idx),) * 2
+    ):
+        benchmark_row_range = (
+            f"{gspread.utils.rowcol_to_a1(benchmark_id_range_start + 1, 1)}:"
+            f"{gspread.utils.rowcol_to_a1(benchmark_id_range_end, n_cols)}"
+        )
+        format_queries.append(
+            dict(range=benchmark_row_range, format=gainsboro_background)
+        )
+
+    # Apply formats
+    worksheet.batch_format(format_queries)
 
     # auto-resize rows and cols
     worksheet.columns_auto_resize(0, n_cols - 1)

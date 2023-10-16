@@ -110,7 +110,7 @@ class Solver(BaseSolver):
             pass
 
         return dict(
-            float(explained_variance_ratio_sum=self.explained_variance_ratio_.sum()),
+            explained_variance_ratio_sum=float(self.explained_variance_ratio_.sum()),
             version_info=version_info,
             __name=self.name,
             **self._parameters,

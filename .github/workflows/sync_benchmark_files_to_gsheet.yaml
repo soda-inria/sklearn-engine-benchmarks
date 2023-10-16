@@ -5,7 +5,7 @@ on:
     branches: main
 
 jobs:
-  sync_kmeans_benchmark_result_file_with_gsheet:
+  sync_benchmark_result_file_with_gsheet:
     name: Run synchronization script
     runs-on: ubuntu-latest
     environment: Publish
