@@ -26,11 +26,9 @@ class Solver(BaseSolver):
 
     parameters = {
         "svd_solver, power_iteration_normalizer": [
-            (svd_solver, power_iteration_normalizer)
-            for svd_solver in ["full", "randomized"]
-            for power_iteration_normalizer in ["LU"]
-        ]
-        + [("arpack", "none")],
+            ("full", ""),
+            ("randomized", "AR"),
+        ],
         "device": ["cpu", "xpu", "cuda", "mps"],
         "iterated_power": ["auto"],
     }
@@ -61,6 +59,16 @@ class Solver(BaseSolver):
         random_state,
         verbose,
     ):
+        if (
+            self.svd_solver in {"full", "arpack"}
+            and self.power_iteration_normalizer != ""
+        ):
+            raise ValueError(
+                f"svd_solver {self.svd_solver} can only run if "
+                "power_iteration_normalizer parameter is set to 0, but got "
+                f"power_iteration_normalizer={self.power_iteration_normalizer}"
+            )
+
         # Copy the data before running the benchmark to ensure that no unfortunate side
         # effects can happen
         self.X = torch.asarray(X, copy=True, device=self.device)

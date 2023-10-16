@@ -27,11 +27,10 @@ class Solver(BaseSolver):
             ("gpu", "level_zero"),
         ],
         "svd_solver, power_iteration_normalizer": [
-            (svd_solver, power_iteration_normalizer)
-            for svd_solver in ["full", "randomized"]
-            for power_iteration_normalizer in ["LU"]
-        ]
-        + [("arpack", "none")],
+            ("full", ""),
+            ("randomized", "LU"),
+            ("arpack", ""),
+        ],
         "iterated_power": ["auto"],
     }
 
@@ -65,6 +64,15 @@ class Solver(BaseSolver):
         random_state,
         verbose,
     ):
+        if (
+            self.svd_solver in {"full", "arpack"}
+            and self.power_iteration_normalizer != ""
+        ):
+            raise ValueError(
+                f"svd_solver {self.svd_solver} can only run if "
+                "power_iteration_normalizer parameter is set to 0, but got "
+                f"power_iteration_normalizer={self.power_iteration_normalizer}"
+            )
 
         # Copy the data before running the benchmark to ensure that no unfortunate
         # side effects can happen
@@ -83,6 +91,10 @@ class Solver(BaseSolver):
         self.verbose = verbose
 
     def run(self, _):
+        power_iteration_normalizer = self.power_iteration_normalizer
+        if power_iteration_normalizer == "":
+            power_iteration_normalizer = "auto"
+
         estimator = PCA(
             n_components=self.n_components,
             copy=True,
@@ -91,7 +103,7 @@ class Solver(BaseSolver):
             tol=self.tol,
             iterated_power=self.iterated_power,
             n_oversamples=self.n_oversamples,
-            power_iteration_normalizer=self.power_iteration_normalizer,
+            power_iteration_normalizer=power_iteration_normalizer,
             random_state=self.random_state,
         ).fit(self.X, y=None)
 
