@@ -379,18 +379,30 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
     gs = gspread.service_account(gspread_auth_key)
     sheet = gs.open_by_url(gspread_url)
 
+    global_range = (
+        f"{gspread.utils.rowcol_to_a1(1, 1)}:"
+        f"{gspread.utils.rowcol_to_a1(n_rows + 1, n_cols)}"
+    )
+
     try:
         worksheet = sheet.worksheet(GOOGLE_WORKSHEET_NAME)
         worksheet.clear()
         worksheet.clear_basic_filter()
         worksheet.freeze(0, 0)
         worksheet.resize(rows=n_rows + 1, cols=n_cols)
+        worksheet.clear_notes(global_range)
+        white_background = dict(
+            backgroundColorStyle=dict(rgbColor=dict(red=1, green=1, blue=1, alpha=1))
+        )
+        worksheet.format(global_range, white_background)
     except gspread.WorksheetNotFound:
         worksheet = sheet.add_worksheet(
             GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
         )
-        # ensure worksheets are sorted alphabetically
-        sheet.reorder_worksheets(sorted(sheet.worksheets(), key=attrgetter("title")))
+        # ensure worksheets are sorted anti-alphabetically
+        sheet.reorder_worksheets(
+            sorted(sheet.worksheets(), key=attrgetter("title"), reverse=True)
+        )
 
     # upload all values
     worksheet.update(
@@ -410,10 +422,6 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         horizontalAlignment="CENTER",
         verticalAlignment="MIDDLE",
         wrapStrategy="WRAP",
-    )
-    global_range = (
-        f"{gspread.utils.rowcol_to_a1(1, 1)}:"
-        f"{gspread.utils.rowcol_to_a1(n_rows + 1, n_cols)}"
     )
     format_queries.append(dict(range=global_range, format=global_format))
 
