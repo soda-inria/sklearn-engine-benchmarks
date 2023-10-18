@@ -27,9 +27,9 @@ class Solver(BaseSolver):
             ("gpu", "level_zero"),
         ],
         "svd_solver, power_iteration_normalizer": [
-            ("full", ""),
+            ("full", None),
             ("randomized", "LU"),
-            ("arpack", ""),
+            ("arpack", None),
         ],
         "iterated_power": ["auto"],
     }
@@ -66,11 +66,11 @@ class Solver(BaseSolver):
     ):
         if (
             self.svd_solver in {"full", "arpack"}
-            and self.power_iteration_normalizer != ""
+            and self.power_iteration_normalizer is not None
         ):
             raise ValueError(
                 f"svd_solver {self.svd_solver} can only run if "
-                "power_iteration_normalizer parameter is set to 0, but got "
+                "power_iteration_normalizer parameter is set to None, but got "
                 f"power_iteration_normalizer={self.power_iteration_normalizer}"
             )
 
@@ -92,7 +92,7 @@ class Solver(BaseSolver):
 
     def run(self, _):
         power_iteration_normalizer = self.power_iteration_normalizer
-        if power_iteration_normalizer == "":
+        if power_iteration_normalizer is None:
             power_iteration_normalizer = "auto"
 
         estimator = PCA(

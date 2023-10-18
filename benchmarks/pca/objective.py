@@ -16,7 +16,6 @@ class Objective(BaseObjective):
     parameters = dict(
         n_components=[10],
         tol=[0.0],
-        iterated_power=[15],
         n_oversamples=[10],
         random_state=[123],
         verbose=[False],
