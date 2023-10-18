@@ -27,7 +27,6 @@ class Solver(BaseSolver):
         X,
         n_components,
         tol,
-        iterated_power,
         n_oversamples,
         random_state,
         verbose,
@@ -48,7 +47,6 @@ class Solver(BaseSolver):
 
         self.n_components = n_components
         self.tol = tol
-        self.iterated_power = iterated_power
         self.n_oversamples = n_oversamples
         self.random_state = random_state
         self.verbose = verbose

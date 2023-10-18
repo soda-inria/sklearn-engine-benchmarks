@@ -56,7 +56,6 @@ class Objective(BaseObjective):
             X=self.X,
             n_components=self.n_components,
             tol=self.tol,
-            iterated_power=self.iterated_power,
             n_oversamples=self.n_oversamples,
             random_state=self.random_state,
             verbose=self.verbose,
