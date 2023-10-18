@@ -1,4 +1,5 @@
 import hashlib
+from functools import partial
 from io import BytesIO
 from itertools import zip_longest
 from operator import attrgetter
@@ -346,7 +347,25 @@ def _sanitize_df_with_tocsv(df):
 
 
 def _df_to_csv(df, target):
-    df.to_csv(target, index=False, mode="a", date_format=DATES_FORMAT)
+    float_format_fn = partial(
+        np.format_float_positional,
+        precision=3,
+        unique=True,
+        fractional=False,
+        trim="-",
+        sign=False,
+        pad_left=None,
+        pad_right=None,
+        min_digits=None,
+    )
+    df = df.copy()
+    df[WALLTIME] = df[WALLTIME].map(float_format_fn)
+    df.to_csv(
+        target,
+        index=False,
+        mode="a",
+        date_format=DATES_FORMAT,
+    )
 
 
 def _gspread_sync(source, gspread_url, gspread_auth_key):
