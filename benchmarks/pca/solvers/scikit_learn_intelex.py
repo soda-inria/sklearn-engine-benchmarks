@@ -24,7 +24,7 @@ class Solver(BaseSolver):
 
     parameters = {
         "device, runtime": [
-            ("cpu", "numpy"),
+            ("cpu", None),  # TODO: replace "None" with "opencl" if relevant
             ("gpu", "level_zero"),
         ],
         "svd_solver, power_iteration_normalizer": [
@@ -38,7 +38,7 @@ class Solver(BaseSolver):
     stopping_criterion = SingleRunCriterion(1)
 
     def skip(self, **objective_dict):
-        if self.runtime != "numpy":
+        if self.runtime is not None:
             try:
                 device = dpctl.SyclDevice(f"{self.runtime}:{self.device}")
             except Exception:
@@ -106,7 +106,7 @@ class Solver(BaseSolver):
         if power_iteration_normalizer is None:
             power_iteration_normalizer = "auto"
 
-        with nullcontext() if (self.runtime == "numpy") else config_context(
+        with nullcontext() if (self.runtime is None) else config_context(
             target_offload=f"{self.runtime}:{self.device}"
         ):
             estimator = PCA(
