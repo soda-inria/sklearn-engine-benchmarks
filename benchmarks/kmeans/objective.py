@@ -38,7 +38,7 @@ class Objective(BaseObjective):
             sample_weight = np.ones(len(X), dtype=dtype)
         elif self.sample_weight == "random":
             rng_sample_weight = np.random.default_rng(
-                dataset_parameters["sample_weight"] + 1
+                dataset_parameters["random_state"] + 1
             )
             sample_weight = rng_sample_weight.random(size=len(X)).astype(dtype)
         else:

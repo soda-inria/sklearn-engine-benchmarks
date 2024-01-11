@@ -24,8 +24,9 @@ class Objective(BaseObjective):
         "random_state": [123],
     }
 
-    def set_data(self, X, **dataset_parameters):
+    def set_data(self, X, y, **dataset_parameters):
         self.X = X
+        self.y = y
         dtype = X.dtype
 
         if self.sample_weight == "None":
@@ -34,7 +35,7 @@ class Objective(BaseObjective):
             sample_weight = np.ones(len(X), dtype=dtype)
         elif self.sample_weight == "random":
             rng_sample_weight = np.random.default_rng(
-                dataset_parameters["sample_weight"] + 1
+                dataset_parameters["random_state"] + 1
             )
             sample_weight = rng_sample_weight.random(size=len(X)).astype(dtype)
         else:

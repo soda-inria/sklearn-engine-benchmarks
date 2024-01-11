@@ -57,14 +57,15 @@ class Solver(BaseSolver):
         self.coef_ = estimator.coef_
 
     def get_result(self):
+        X, y = self.X, self.y
         if self.sample_weight is not None:
-            X, y, _ = _rescale_data(self.X, self.y, self.sample_weight, inplace=True)
+            X, y, _ = _rescale_data(X, y, self.sample_weight, inplace=True)
 
         y = y.reshape((y.shape[0], -1))
 
-        coef_ = self.coef_.reshape((X.shape[0], 1, -1))
+        coef_ = self.coef_.reshape((-1, X.shape[1], 1))
 
-        objective = ((y - (X @ coef_).squeeze(1)) ** 2).sum() + (
+        objective = ((y.T - (X @ coef_).squeeze(2)) ** 2).sum() + (
             len(y.T) * self.alpha * (coef_**2).sum()
         )
 

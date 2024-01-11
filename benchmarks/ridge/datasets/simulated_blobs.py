@@ -30,7 +30,7 @@ class Dataset(BaseDataset):
     def get_data(self):
         rng = np.random.RandomState(self.random_state)
 
-        X, y = make_correlated_data(
+        X, y, _ = make_correlated_data(
             self.n_samples, self.n_features, self.n_targets, random_state=rng
         )
 
