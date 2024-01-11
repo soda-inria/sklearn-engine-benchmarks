@@ -50,7 +50,9 @@ SYSTEM_CPUS = "Nb cpus"
 SYSTEM_PROCESSOR = "Cpu name"
 SYSTEM_RAM = "RAM (GB)"
 SYSTEM_GPU = "Gpu name"
-RESULT_NB_ITERATIONS = "Result nb iterations"
+# TODO: add number of iterations once iteration-based solvers are
+# added to the benchmark.
+# RESULT_NB_ITERATIONS = "Result nb iterations"
 OBJECTIVE_FUNCTION_VALUE = "Result objective value"
 VERSION_INFO = "Version info"
 RUN_DATE = "Run date"
@@ -82,7 +84,7 @@ TABLE_DISPLAY_ORDER = [
     RUN_DATE,
     VERSION_INFO,
     COMMENT,
-    RESULT_NB_ITERATIONS,
+    # RESULT_NB_ITERATIONS,
     OBJECTIVE_FUNCTION_VALUE,
     DATA_RANDOM_STATE,
     SOLVER_RANDOM_STATE,
@@ -95,11 +97,12 @@ COLUMNS_DTYPES = {
     NB_DATA_FEATURES: np.int64,
     NB_DATA_TARGETS: np.int64,
     ALPHA: np.float64,
+    DATA_SAMPLE_WEIGHTS: str,
     WALLTIME: np.float64,
     BACKEND_PROVIDER: str,
     COMPUTE_DEVICE: str,
     COMPUTE_RUNTIME: str,
-    RESULT_NB_ITERATIONS: np.int64,
+    # RESULT_NB_ITERATIONS: np.int64,
     OBJECTIVE_FUNCTION_VALUE: np.float64,
     SOLVER: str,
     PLATFORM: str,
@@ -152,7 +155,7 @@ ROW_SORT_ORDER = [
     (BACKEND_PROVIDER, True),
     (COMPUTE_DEVICE, True),
     (COMPUTE_RUNTIME, True),
-    (RESULT_NB_ITERATIONS, True),
+    # (RESULT_NB_ITERATIONS, True),
     (OBJECTIVE_FUNCTION_VALUE, False),
     (SOLVER, True),
     (SYSTEM_GPU, True),
@@ -174,16 +177,15 @@ _row_sort_by, _row_sort_ascending = map(list, zip(*ROW_SORT_ORDER))
 PARQUET_TABLE_DISPLAY_MAPPING = dict(
     time=WALLTIME,
     objective_value=OBJECTIVE_FUNCTION_VALUE,
-    objective_n_iter=RESULT_NB_ITERATIONS,
+    # objective_n_iter=RESULT_NB_ITERATIONS,
     objective_dataset_param_n_samples=NB_DATA_SAMPLES,
     objective_dataset_param_n_features=NB_DATA_FEATURES,
     objective_dataset_param_n_targets=NB_DATA_TARGETS,
     objective_dataset_param_dtype=DTYPE,
     objective_dataset_param_random_state=DATA_RANDOM_STATE,
     objective_objective_param_alpha=ALPHA,
-    objective_objective_param_fit_intercept=ALPHA,
-    objective_objective_param_alpha=ALPHA,
     objective_objective_param_random_state=SOLVER_RANDOM_STATE,
+    objective_objective_param_sample_weight=DATA_SAMPLE_WEIGHTS,
     objective_solver_param___name=BACKEND_PROVIDER,
     objective_solver_param_device=COMPUTE_DEVICE,
     objective_solver_param_runtime=COMPUTE_RUNTIME,
