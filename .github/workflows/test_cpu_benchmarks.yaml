@@ -143,3 +143,5 @@ jobs:
         PYTHONPATH=$PYTHONPATH:$(realpath ../../kmeans_dpcpp/) benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=1000,n_features=14]
         cd ../pca
         benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=100,n_features=100]
+        cd ../ridge
+        benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=100,n_features=100]  # TODO add relevant parameters

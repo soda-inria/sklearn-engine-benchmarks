@@ -7,7 +7,7 @@ with safe_import_context() as import_ctx:
 
 
 class Objective(BaseObjective):
-    name = "Lloyd walltime"
+    name = "Ridge walltime"
     url = "https://github.com/soda-inria/sklearn-engine-benchmarks"
 
     requirements = ["numpy"]
@@ -16,17 +16,13 @@ class Objective(BaseObjective):
     # computations, the solver parameters are part of the objective and must be set
     # for all solvers, rather than being an independent benchmark space for each
     # solver.
-    parameters = dict(
-        n_clusters=[127],
-        init=["random", "k-means++"],
-        n_init=[1],
-        max_iter=[100],
-        tol=[0],
-        verbose=[0],  # NB: for kmeans, verbosity can affect the performance
-        algorithm=["lloyd"],
-        random_state=[123],
-        sample_weight=["None", "random"],
-    )
+    parameters = {
+        "alpha": [1.0],
+        "fit_intercept": [True],
+        "solver, max_iter, tol": [("svd", None, 0)],
+        "sample_weight": ["None", "random"],
+        "random_state": [123],
+    }
 
     def set_data(self, X, **dataset_parameters):
         self.X = X
@@ -47,24 +43,10 @@ class Objective(BaseObjective):
                 f"'unary' or 'random', but got {sample_weight}."
             )
 
-        if self.init == "random":
-            rng_init = np.random.default_rng(self.random_state)
-            init = np.array(
-                rng_init.choice(X, self.n_clusters, replace=False), dtype=X.dtype
-            )
-        elif self.init == "k-means++":
-            init = self.init
-        else:
-            raise ValueError(
-                "Expected 'init' parameter to be either equal to 'random' or "
-                f"'k-means++' but got {init}."
-            )
-
-        self.init_ = init
         self.sample_weight_ = sample_weight
         self.dataset_parameters = dataset_parameters
 
-    def evaluate_result(self, inertia, n_iter, **solver_parameters):
+    def evaluate_result(self, objective, **solver_parameters):
         all_parameters = dict(solver_param_run_date=datetime.today())
         all_parameters.update(
             {
@@ -82,25 +64,23 @@ class Objective(BaseObjective):
             {("solver_param_" + key): value for key, value in solver_parameters.items()}
         )
         return dict(
-            value=inertia,
-            n_iter=n_iter,
+            value=objective,
             objective_param___name=self.name,
             **all_parameters,
         )
 
     def get_one_result(self):
-        return dict(inertia=1, n_iter=100)
+        return dict(objective=1)
 
     def get_objective(self):
         return dict(
             X=self.X,
+            y=self.y,
             sample_weight=self.sample_weight_,
-            init=self.init_,
-            n_clusters=self.n_clusters,
-            n_init=self.n_init,
+            alpha=self.alpha,
+            fit_intercept=self.fit_intercept,
+            solver=self.solver,
             max_iter=self.max_iter,
             tol=self.tol,
-            verbose=self.verbose,
-            algorithm=self.algorithm,
             random_state=self.random_state,
         )
