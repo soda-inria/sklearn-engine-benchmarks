@@ -4,6 +4,7 @@ from benchopt import BaseObjective, safe_import_context
 
 with safe_import_context() as import_ctx:
     import numpy as np
+    from sklearn.linear_model._base import _rescale_data
 
 
 class Objective(BaseObjective):
@@ -47,7 +48,21 @@ class Objective(BaseObjective):
         self.sample_weight_ = sample_weight
         self.dataset_parameters = dataset_parameters
 
-    def evaluate_result(self, objective, **solver_parameters):
+    def evaluate_result(self, weights, intercept, **solver_parameters):
+        # NB: weights, intercept expected to be numpy arrays
+
+        X, y = self.X, self.y
+        if self.sample_weight_ is not None:
+            X, y, _ = _rescale_data(X, y, self.sample_weight_, inplace=False)
+
+        y = y.reshape((y.shape[0], -1))
+        weights = weights.reshape((-1, X.shape[1], 1))
+
+        value = (
+            (((X @ weights).squeeze(2) + (intercept - y).T) ** 2).sum()
+            + (self.alpha * (weights**2).sum())
+        ) / (X.shape[0] * len(y.T))
+
         all_parameters = dict(solver_param_run_date=datetime.today())
         all_parameters.update(
             {
@@ -65,7 +80,7 @@ class Objective(BaseObjective):
             {("solver_param_" + key): value for key, value in solver_parameters.items()}
         )
         return dict(
-            value=objective,
+            value=value,
             objective_param___name=self.name,
             **all_parameters,
         )
@@ -74,10 +89,19 @@ class Objective(BaseObjective):
         return dict(objective=1)
 
     def get_objective(self):
+        # Copy the data before sending to the solver, to ensure that no unfortunate
+        # side effects can happen
+        X = self.X.copy()
+        y = self.y.copy()
+
+        sample_weight = self.sample_weight_
+        if hasattr(sample_weight, "copy"):
+            sample_weight = sample_weight.copy()
+
         return dict(
-            X=self.X,
-            y=self.y,
-            sample_weight=self.sample_weight_,
+            X=X,
+            y=y,
+            sample_weight=sample_weight,
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
             solver=self.solver,

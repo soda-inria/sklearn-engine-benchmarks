@@ -5,7 +5,6 @@ from benchopt.stopping_criterion import SingleRunCriterion
 
 with safe_import_context() as import_ctx:
     from sklearn.linear_model import Ridge
-    from sklearn.linear_model._base import _rescale_data
 
 
 class Solver(BaseSolver):
@@ -26,15 +25,9 @@ class Solver(BaseSolver):
         tol,
         random_state,
     ):
-        # Copy the data before running the benchmark to ensure that no unfortunate side
-        # effects can happen
-        self.X = X.copy()
-        self.y = y.copy()
-
-        if hasattr(sample_weight, "copy"):
-            sample_weight = sample_weight.copy()
+        self.X = X
+        self.y = y
         self.sample_weight = sample_weight
-
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.solver = solver
@@ -54,23 +47,13 @@ class Solver(BaseSolver):
             random_state=self.random_state,
         ).fit(self.X, self.y, self.sample_weight)
 
-        self.coef_ = estimator.coef_
+        self.weights = estimator.coef_
+        self.intercept = estimator.intercept_
 
     def get_result(self):
-        X, y = self.X, self.y
-        if self.sample_weight is not None:
-            X, y, _ = _rescale_data(X, y, self.sample_weight, inplace=True)
-
-        y = y.reshape((y.shape[0], -1))
-
-        coef_ = self.coef_.reshape((-1, X.shape[1], 1))
-
-        objective = ((y.T - (X @ coef_).squeeze(2)) ** 2).sum() + (
-            len(y.T) * self.alpha * (coef_**2).sum()
-        )
-
         return dict(
-            objective=objective,
+            weights=self.weights,
+            intercept=self.intercept,
             version_info=f"scikit-learn {version('scikit-learn')}",
             __name=self.name,
             **self._parameters,
