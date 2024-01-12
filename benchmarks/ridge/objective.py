@@ -21,7 +21,7 @@ class Objective(BaseObjective):
         "alpha": [1.0],
         "fit_intercept": [True],
         "solver, max_iter, tol": [("svd", None, 0)],
-        "sample_weight": ["None", "random"],
+        "sample_weight": ["None"],  # NB: add "random" to test non None weights
         "random_state": [123],
     }
 
@@ -86,7 +86,19 @@ class Objective(BaseObjective):
         )
 
     def get_one_result(self):
-        return dict(objective=1)
+        n_features = self.dataset_parameters["n_features"]
+        n_targets = self.dataset_parameters["n_targets"]
+        if n_targets == 1:
+            weights = np.ones((n_features,))
+        else:
+            weights = np.ones(
+                (
+                    n_targets,
+                    n_features,
+                )
+            )
+
+        return dict(weights=weights, intercept=np.ones((n_targets,)))
 
     def get_objective(self):
         # Copy the data before sending to the solver, to ensure that no unfortunate

@@ -10,13 +10,12 @@ class Dataset(BaseDataset):
 
     parameters = {
         "n_samples, n_features": [
-            (20_000_000, 100),
+            (10_000_000, 100),
             (5000, 5000),
-            (20_000_000, 10),
+            (10_000_000, 10),
             (2_000_000, 100),
-            (1500, 1500),
         ],
-        "n_targets": [1, 5, 20],
+        "n_targets": [1, 10],
         "dtype": ["float32"],
         "random_state": [123],
     }

@@ -36,7 +36,6 @@ COMMENT = "Comment"
 COMPUTE_DEVICE = "Compute device"
 COMPUTE_RUNTIME = "Compute runtime"
 DATA_RANDOM_STATE = "Data random state"
-DATA_SAMPLE_WEIGHTS = "Data sample weights"
 DTYPE = "Dtype"
 NB_DATA_FEATURES = "Nb data features"
 NB_DATA_SAMPLES = "Nb data samples"
@@ -66,7 +65,6 @@ TABLE_DISPLAY_ORDER = [
     NB_DATA_SAMPLES,
     NB_DATA_FEATURES,
     NB_DATA_TARGETS,
-    DATA_SAMPLE_WEIGHTS,
     WALLTIME,
     BACKEND_PROVIDER,
     COMPUTE_DEVICE,
@@ -94,7 +92,6 @@ COLUMNS_DTYPES = {
     NB_DATA_SAMPLES: np.int64,
     NB_DATA_FEATURES: np.int64,
     NB_DATA_TARGETS: np.int64,
-    DATA_SAMPLE_WEIGHTS: str,
     WALLTIME: np.float64,
     BACKEND_PROVIDER: str,
     COMPUTE_DEVICE: str,
@@ -116,7 +113,7 @@ COLUMNS_DTYPES = {
     COMMENT: str,
 }
 
-COLUMNS_WITH_NONE_STRING = [DATA_SAMPLE_WEIGHTS]
+COLUMNS_WITH_NONE_STRING = []
 
 # If all those fields have equal values for two given benchmarks, then the oldest
 # benchmark (given by RUN_DATE) will be discarded
@@ -126,7 +123,6 @@ UNIQUE_BENCHMARK_KEY = [
     NB_DATA_SAMPLES,
     NB_DATA_FEATURES,
     NB_DATA_TARGETS,
-    DATA_SAMPLE_WEIGHTS,
     BACKEND_PROVIDER,
     SOLVER,
     COMPUTE_DEVICE,
@@ -146,7 +142,6 @@ ROW_SORT_ORDER = [
     (NB_DATA_SAMPLES, False),
     (NB_DATA_FEATURES, False),
     (NB_DATA_TARGETS, False),
-    (DATA_SAMPLE_WEIGHTS, True),
     (WALLTIME, True),
     (BACKEND_PROVIDER, True),
     (COMPUTE_DEVICE, True),
@@ -180,7 +175,6 @@ PARQUET_TABLE_DISPLAY_MAPPING = dict(
     objective_dataset_param_dtype=DTYPE,
     objective_dataset_param_random_state=DATA_RANDOM_STATE,
     objective_objective_param_random_state=SOLVER_RANDOM_STATE,
-    objective_objective_param_sample_weight=DATA_SAMPLE_WEIGHTS,
     objective_objective_param_solver=SOLVER,
     objective_solver_param___name=BACKEND_PROVIDER,
     objective_solver_param_device=COMPUTE_DEVICE,
