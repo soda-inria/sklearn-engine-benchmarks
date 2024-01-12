@@ -2,7 +2,6 @@ import hashlib
 from functools import partial
 from io import BytesIO
 from itertools import zip_longest
-from operator import attrgetter
 
 import numpy as np
 import pandas as pd
@@ -401,7 +400,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         )
         # ensure worksheets are sorted anti-alphabetically
         sheet.reorder_worksheets(
-            sorted(sheet.worksheets(), key=attrgetter("title"), reverse=True)
+            sorted(sheet.worksheets(), key=lambda worksheet: worksheet.title.lower())
         )
 
     # upload all values

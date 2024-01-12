@@ -407,9 +407,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
             GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
         )
         # ensure worksheets are sorted anti-alphabetically
-        sheet.reorder_worksheets(
-            sorted(sheet.worksheets(), key=attrgetter("title"), reverse=True)
-        )
+        sheet.reorder_worksheets(sorted(sheet.worksheets(), key=attrgetter("title")))
 
     # upload all values
     worksheet.update(
