@@ -144,4 +144,4 @@ jobs:
         cd ../pca
         benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=100,n_features=100]
         cd ../ridge
-        benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=100,n_features=100]  # TODO add relevant parameters
+        benchopt run --no-plot -l -d Simulated_correlated_data[n_samples=100,n_features=100,n_targets=2]
