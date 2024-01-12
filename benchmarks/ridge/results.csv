@@ -1,0 +1,25 @@
+Benchmark id,Dtype,Nb data samples,Nb data features,Nb data targets,Data sample weights,alpha,Walltime,Backend provider,Compute device,Compute runtime,Solver,Nb cpus,Cpu name,Gpu name,RAM (GB),Platform,Platform architecture,Platform release,Run date,Version info,Comment,Result objective value,Data random state,Solver random state
+3e6d9fa7,float32,200000,100,20,None,1.0,0.313,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,9653625.760253906,123,123
+e7a310cb,float32,200000,100,20,random,1.0,0.355,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,4837163.777099609,123,123
+717e20b6,float32,200000,100,5,None,1.0,0.292,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,2390454.421310425,123,123
+34fcc214,float32,200000,100,5,random,1.0,0.341,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,1199593.1394348145,123,123
+f9ad376b,float32,200000,100,1,None,1.0,0.537,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,667870.030544281,123,123
+bd618e32,float32,200000,100,1,random,1.0,0.329,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,335730.99897003174,123,123
+b1164905,float32,200000,10,20,None,1.0,0.0513,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,978816.2872009276,123,123
+227daaba,float32,200000,10,20,random,1.0,0.0537,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,490945.86505126953,123,123
+188adee3,float32,200000,10,5,None,1.0,0.0451,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,178935.9187784195,123,123
+7c6da6dd,float32,200000,10,5,random,1.0,0.0471,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,89726.84803056717,123,123
+6e8b775b,float32,200000,10,1,None,1.0,0.0385,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,71637.0589671135,123,123
+f355d572,float32,200000,10,1,random,1.0,0.032,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,35833.32835125923,123,123
+46bef6c6,float32,1500,1500,20,None,1.0,0.426,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,475352.138671875,123,123
+561d0ce5,float32,1500,1500,20,random,1.0,0.469,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,295619.1181640625,123,123
+79df633d,float32,1500,1500,5,None,1.0,0.425,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,34620.72705078125,123,123
+9e51b4f6,float32,1500,1500,5,random,1.0,0.45,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,21469.46875,123,123
+63405b3d,float32,1500,1500,1,None,1.0,0.432,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,2250.33251953125,123,123
+784cd81e,float32,1500,1500,1,random,1.0,0.412,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,1258.864501953125,123,123
+4fdd16bc,float32,500,500,20,None,1.0,0.0515,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,101646.53369140624,123,123
+48999078,float32,500,500,20,random,1.0,0.0718,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,66861.75463867188,123,123
+28e582c7,float32,500,500,5,None,1.0,0.0519,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,8771.281860351562,123,123
+93625d55,float32,500,500,5,random,1.0,0.0507,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,5395.750244140625,123,123
+33f75d20,float32,500,500,1,None,1.0,0.0512,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,377.2563629150391,123,123
+f89a30fa,float32,500,500,1,random,1.0,0.0919,scikit-learn,,,,32,AMD EPYC 7302 16-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-12,scikit-learn 1.3.2,,242.02552032470703,123,123
