@@ -48,6 +48,9 @@ class Solver(BaseSolver):
         return False, None
 
     def warm_up(self):
+        sample_weight = self.sample_weight
+        if sample_weight is not None:
+            sample_weight = sample_weight[:2]
         Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
@@ -57,7 +60,7 @@ class Solver(BaseSolver):
             solver=self.solver,
             positive=True if (self.solver == "lbfgs") else False,
             random_state=self.random_state,
-        ).fit(self.X, self.y, self.sample_weight)
+        ).fit(self.X[:2], self.y[:2], sample_weight)
 
     def run(self, _):
         estimator = Ridge(

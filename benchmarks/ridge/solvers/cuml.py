@@ -69,11 +69,14 @@ class Solver(BaseSolver):
         self.random_state = random_state
 
     def warm_up(self):
+        sample_weight = self.sample_weight
+        if sample_weight is not None:
+            sample_weight = sample_weight[:2]
         cuml.Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
             solver=self.solver,
-        ).fit(self.X, self.y, sample_weight=self.sample_weight)
+        ).fit(self.X[:2], self.y[:2], sample_weight=sample_weight)
 
     def run(self, _):
         estimator = cuml.Ridge(
