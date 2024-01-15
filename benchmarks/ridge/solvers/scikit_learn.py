@@ -64,20 +64,10 @@ class Solver(BaseSolver):
         self.n_iter_ = estimator.n_iter_
 
     def get_result(self):
-        n_iter = self.n_iter_
-        if isinstance(n_iter, list):
-            n_iter = set(n_iter)
-            if len(n_iter) > 1:
-                raise ValueError(
-                    "In multitarget mode, the same number of iterations is expected "
-                    "for all targets, to keep reports comparable."
-                )
-            n_iter = n_iter.pop()
-
         return dict(
             weights=self.weights,
             intercept=self.intercept,
-            n_iter=n_iter,
+            n_iter=self.n_iter_,
             version_info=f"scikit-learn {version('scikit-learn')}",
             __name=self.name,
             **self._parameters,

@@ -1,3 +1,4 @@
+import numbers
 from datetime import datetime
 
 from benchopt import BaseObjective, safe_import_context
@@ -87,6 +88,23 @@ class Objective(BaseObjective):
         all_parameters.update(
             {("solver_param_" + key): value for key, value in solver_parameters.items()}
         )
+
+        if not (isinstance(n_iter, numbers.Number) or (n_iter is None)):
+            n_iter = set(n_iter)
+            if len(n_iter) > 1:
+                raise ValueError(
+                    "In multitarget mode, the same number of iterations is expected "
+                    "for all targets, to keep reports comparable."
+                )
+            n_iter = n_iter.pop()
+
+        # NB: str for n_iter is a more practical type because it enables
+        # using missing values for solvers for which it doesn't apply
+        if n_iter is None:
+            n_iter = ""
+        else:
+            n_iter = str(n_iter)
+
         return dict(
             value=value,
             n_iter=n_iter,

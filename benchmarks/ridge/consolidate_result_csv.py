@@ -94,7 +94,9 @@ COLUMNS_DTYPES = {
     BACKEND_PROVIDER: str,
     COMPUTE_DEVICE: str,
     COMPUTE_RUNTIME: str,
-    RESULT_NB_ITERATIONS: np.int64,
+    # NB: following should be int but str is more practical because it enables
+    # use of missing values for solver for which it doesn't apply.
+    RESULT_NB_ITERATIONS: str,
     OBJECTIVE_FUNCTION_VALUE: np.float64,
     SOLVER: str,
     PLATFORM: str,
