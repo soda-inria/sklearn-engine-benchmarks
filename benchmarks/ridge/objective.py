@@ -56,7 +56,7 @@ class Objective(BaseObjective):
         self.sample_weight_ = sample_weight
         self.dataset_parameters = dataset_parameters
 
-    def evaluate_result(self, weights, intercept, **solver_parameters):
+    def evaluate_result(self, weights, intercept, n_iter, **solver_parameters):
         # NB: weights, intercept expected to be numpy arrays
 
         X, y = self.X, self.y
@@ -89,6 +89,7 @@ class Objective(BaseObjective):
         )
         return dict(
             value=value,
+            n_iter=n_iter,
             objective_param___name=self.name,
             **all_parameters,
         )
