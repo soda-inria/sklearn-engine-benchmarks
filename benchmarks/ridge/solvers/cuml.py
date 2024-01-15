@@ -68,6 +68,13 @@ class Solver(BaseSolver):
         self.tol = tol
         self.random_state = random_state
 
+    def warm_up(self):
+        cuml.Ridge(
+            alpha=self.alpha,
+            fit_intercept=self.fit_intercept,
+            solver=self.solver,
+        ).fit(self.X, self.y, sample_weight=self.sample_weight)
+
     def run(self, _):
         estimator = cuml.Ridge(
             alpha=self.alpha,

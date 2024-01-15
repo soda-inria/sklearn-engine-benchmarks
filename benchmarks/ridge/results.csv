@@ -1,16 +1,19 @@
 Benchmark id,Dtype,Nb data samples,Nb data features,Nb data targets,Walltime,Backend provider,Compute device,Compute runtime,Solver,Nb cpus,Cpu name,Gpu name,RAM (GB),Platform,Platform architecture,Platform release,Run date,Version info,Comment,Result nb iterations,Result objective value,Data random state,Solver random state
+3a327106,float32,5000000,100,1,1.37,cuml,gpu,,svd,32,AMD EPYC 7502 32-Core Processor,NVIDIA A100-PCIE-40GB,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,4.506280786409378,123,123
 3a327106,float32,5000000,100,1,1.73,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,4.506281986367035,123,123
 3a327106,float32,5000000,100,1,4.88,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,4.506281186382675,123,123
 3a327106,float32,5000000,100,1,16.8,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,4.506280786407089,123,123
 9bd2a256,float32,5000000,100,10,1.9,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.079804773100586,123,123
 9bd2a256,float32,5000000,100,10,16.9,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.079804613102112,123,123
 9bd2a256,float32,5000000,100,10,43,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,2.0798041330996706,123,123
+a9a05f25,float32,5000000,10,1,0.131,cuml,gpu,,svd,32,AMD EPYC 7502 32-Core Processor,NVIDIA A100-PCIE-40GB,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,0.0251269475669592,123,123
 a9a05f25,float32,5000000,10,1,0.205,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,0.025126947566834,123,123
 a9a05f25,float32,5000000,10,1,0.743,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,0.025126946004498,123,123
 a9a05f25,float32,5000000,10,1,0.849,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,0.025126947566998,123,123
 ffd32c2e,float32,5000000,10,10,0.437,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,0.1351635453291702,123,123
 ffd32c2e,float32,5000000,10,10,1.17,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,0.135163585330429,123,123
 ffd32c2e,float32,5000000,10,10,7.72,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,0.1351635853305244,123,123
+c49c3df8,float32,2000000,100,1,0.557,cuml,gpu,,svd,32,AMD EPYC 7502 32-Core Processor,NVIDIA A100-PCIE-40GB,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.283151841176033,123,123
 c49c3df8,float32,2000000,100,1,0.692,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.283151591079712,123,123
 c49c3df8,float32,2000000,100,1,1.92,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,2.2831518411445617,123,123
 c49c3df8,float32,2000000,100,1,6.06,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.283151841176987,123,123
@@ -19,6 +22,7 @@ c49c3df8,float32,2000000,100,1,6.06,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core 
 1a8c391a,float32,2000000,100,10,18.2,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,2.1605555927993776,123,123
 e5684553,float32,5000,5000,1,0.146,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,9.077718115234376,123,123
 e5684553,float32,5000,5000,1,0.573,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.20544375,123,123
+e5684553,float32,5000,5000,1,6.29,cuml,gpu,,svd,32,AMD EPYC 7502 32-Core Processor,NVIDIA A100-PCIE-40GB,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.20544453125,123,123
 e5684553,float32,5000,5000,1,10.2,scikit-learn,,,svd,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.20544296875,123,123
 7b05f2bf,float32,5000,5000,10,0.509,scikit-learn,,,cholesky,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,,2.375214765625,123,123
 7b05f2bf,float32,5000,5000,10,1.22,scikit-learn,,,lsqr,32,AMD EPYC 7502 32-Core Processor,,503,Linux,x86_64,4.18.0-394.el8.x86_64,2024-01-15,scikit-learn 1.3.2,,25,9.804442734375,123,123
