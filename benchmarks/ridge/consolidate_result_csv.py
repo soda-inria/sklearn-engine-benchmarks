@@ -139,7 +139,7 @@ ROW_SORT_ORDER = [
     (DTYPE, True),
     (NB_DATA_SAMPLES, False),
     (NB_DATA_FEATURES, False),
-    (NB_DATA_TARGETS, False),
+    (NB_DATA_TARGETS, True),
     (WALLTIME, True),
     (BACKEND_PROVIDER, True),
     (COMPUTE_DEVICE, True),
@@ -393,8 +393,11 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         worksheet = sheet.add_worksheet(
             GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
         )
+
         # ensure worksheets are sorted anti-alphabetically
-        sheet.reorder_worksheets(sorted(sheet.worksheets(), key=attrgetter("title")))
+        sheet.reorder_worksheets(
+            sorted(sheet.worksheets(), key=lambda worksheet: worksheet.title.lower())
+        )
 
     # upload all values
     worksheet.update(
