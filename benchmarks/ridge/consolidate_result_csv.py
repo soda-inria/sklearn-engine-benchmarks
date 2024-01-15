@@ -2,7 +2,6 @@ import hashlib
 from functools import partial
 from io import BytesIO
 from itertools import zip_longest
-from operator import attrgetter
 
 import numpy as np
 import pandas as pd
