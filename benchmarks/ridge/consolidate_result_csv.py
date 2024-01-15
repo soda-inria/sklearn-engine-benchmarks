@@ -22,8 +22,6 @@ BENCHMARK_DEFINING_COLUMNS = [
     "objective_dataset_param_random_state",
     "objective_objective_param_alpha",
     "objective_objective_param_fit_intercept",
-    "objective_objective_param_max_iter",
-    "objective_objective_param_tol",
     "objective_objective_param_sample_weight",
     "objective_objective_param_random_state",
 ]
