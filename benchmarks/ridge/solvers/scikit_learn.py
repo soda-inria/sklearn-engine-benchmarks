@@ -35,6 +35,23 @@ class Solver(BaseSolver):
         self.tol = tol
         self.random_state = random_state
 
+    def skip(self, **objective_dict):
+        y = objective_dict["y"]
+        solver = objective_dict["solver"]
+
+        if solver == "sparse_cg":
+            # TODO: investigate ? seems to freeze or take very long time
+            return True, "sparse_cg doesn't seem to work well at the moment ?"
+
+        is_multitarget = (y.ndim == 2) and (y.shape[1] > 1)
+
+        if is_multitarget and solver.startswith("sag"):
+            # TODO: investigate ? it freezes or take very long time
+            # at most should multiply single-target time by number of targets.
+            return True, "sag and saga doesn't support well multitarget."
+
+        return False, None
+
     def run(self, _):
         estimator = Ridge(
             alpha=self.alpha,

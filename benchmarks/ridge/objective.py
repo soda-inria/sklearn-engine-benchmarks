@@ -20,7 +20,15 @@ class Objective(BaseObjective):
     parameters = {
         "alpha": [1.0],
         "fit_intercept": [True],
-        "solver, max_iter, tol": [("svd", None, 0)],
+        "solver, max_iter, tol": [
+            ("svd", None, 0),
+            ("cholesky", None, 0),
+            ("lsqr", 25, 0),
+            ("sparse_cg", 25, 0),
+            ("sag", 50, 0),
+            ("saga", 25, 0),
+            ("lbfgs", 100, 0),
+        ],
         "sample_weight": ["None"],  # NB: add "random" to test non None weights
         "random_state": [123],
     }
