@@ -47,6 +47,18 @@ class Solver(BaseSolver):
 
         return False, None
 
+    def warm_up(self):
+        Ridge(
+            alpha=self.alpha,
+            fit_intercept=self.fit_intercept,
+            copy_X=False,
+            max_iter=self.max_iter,
+            tol=self.tol,
+            solver=self.solver,
+            positive=True if (self.solver == "lbfgs") else False,
+            random_state=self.random_state,
+        ).fit(self.X, self.y, self.sample_weight)
+
     def run(self, _):
         estimator = Ridge(
             alpha=self.alpha,
