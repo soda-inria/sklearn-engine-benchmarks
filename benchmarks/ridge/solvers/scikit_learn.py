@@ -36,19 +36,14 @@ class Solver(BaseSolver):
         self.random_state = random_state
 
     def skip(self, **objective_dict):
-        y = objective_dict["y"]
         solver = objective_dict["solver"]
 
-        if solver == "sparse_cg":
-            # TODO: investigate ? seems to freeze or take very long time
-            return True, "sparse_cg doesn't seem to work well at the moment ?"
-
-        is_multitarget = (y.ndim == 2) and (y.shape[1] > 1)
-
-        if is_multitarget and solver.startswith("sag"):
-            # TODO: investigate ? it freezes or take very long time
-            # at most should multiply single-target time by number of targets.
-            return True, "sag and saga doesn't support well multitarget."
+        if solver in ["sag", "saga", "sparse_cg", "lbfgs"]:
+            # TODO: investigate ?
+            return True, (
+                "Preliminary testing show this solver is too slow to have relevance "
+                "in the benchmark."
+            )
 
         return False, None
 
@@ -66,11 +61,13 @@ class Solver(BaseSolver):
 
         self.weights = estimator.coef_
         self.intercept = estimator.intercept_
+        self.n_iter_ = estimator.n_iter_
 
     def get_result(self):
         return dict(
             weights=self.weights,
             intercept=self.intercept,
+            n_iter=self.n_iter_,
             version_info=f"scikit-learn {version('scikit-learn')}",
             __name=self.name,
             **self._parameters,
