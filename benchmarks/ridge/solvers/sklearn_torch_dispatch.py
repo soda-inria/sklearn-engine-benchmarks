@@ -31,6 +31,11 @@ class Solver(BaseSolver):
     stopping_criterion = SingleRunCriterion(1)
 
     def skip(self, **objective_dict):
+        if not Ridge()._get_tags()["array_api_support"]:
+            return True, (
+                "Requires the development branch for Ridge support for Array API."
+            )
+
         try:
             torch.zeros(1, dtype=torch.float32, device=self.device)
         except Exception:
