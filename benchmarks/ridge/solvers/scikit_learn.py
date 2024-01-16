@@ -45,6 +45,9 @@ class Solver(BaseSolver):
                 "in the benchmark."
             )
 
+        if solver == "???":
+            return True, ""
+
         return False, None
 
     def warm_up(self):

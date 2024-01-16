@@ -29,6 +29,9 @@ class Objective(BaseObjective):
             ("sag", 50, 0),
             ("saga", 25, 0),
             ("lbfgs", 100, 0),
+            # Used for solvers like scikit-learn-intelex that doesn't
+            # document the underlying solver nor expose the n_iter_ attribute
+            ("???", None, 0),
         ],
         "sample_weight": ["None"],  # NB: add "random" to test non None weights
         "random_state": [123],
