@@ -14,7 +14,7 @@ with safe_import_context() as import_ctx:
     import sklearn_pytorch_engine  # noqa
     import torch
     from sklearn import config_context
-    from sklearn.linear_models import Ridge
+    from sklearn.linear_model import Ridge
     from sklearn_pytorch_engine._utils import has_fp64_support
 
     # isort: on
@@ -120,9 +120,9 @@ class Solver(BaseSolver):
             pass
 
         return dict(
-            weights=self.weights.cpu().asnumpy(),
-            intercept=self.intercept.cpu().asnumpy(),
-            n_iter=self.n_iter_.cpu(),
+            weights=self.weights.cpu().numpy(),
+            intercept=self.intercept.cpu().numpy(),
+            n_iter=self.n_iter_,
             version_info=version_info,
             __name=self.name,
             **self._parameters,
