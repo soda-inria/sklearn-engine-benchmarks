@@ -32,15 +32,15 @@ class Objective(BaseObjective):
         self.X = X
         dtype = X.dtype
 
+        if self.init == "random" or self.sample_weight == "random":
+            rng = np.random.default_rng(self.random_state)
+
         if self.sample_weight == "None":
             sample_weight = None
         elif self.sample_weight == "unary":
             sample_weight = np.ones(len(X), dtype=dtype)
         elif self.sample_weight == "random":
-            rng_sample_weight = np.random.default_rng(
-                dataset_parameters["random_state"] + 1
-            )
-            sample_weight = rng_sample_weight.random(size=len(X)).astype(dtype)
+            sample_weight = rng.random(size=len(X)).astype(dtype)
         else:
             raise ValueError(
                 "Expected 'sample_weight' parameter to be either equal to 'None', "
@@ -48,9 +48,8 @@ class Objective(BaseObjective):
             )
 
         if self.init == "random":
-            rng_init = np.random.default_rng(self.random_state)
             init = np.array(
-                rng_init.choice(X, self.n_clusters, replace=False), dtype=X.dtype
+                rng.choice(X, self.n_clusters, replace=False), dtype=X.dtype
             )
         elif self.init == "k-means++":
             init = self.init
