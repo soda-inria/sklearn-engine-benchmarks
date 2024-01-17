@@ -93,10 +93,7 @@ class Objective(BaseObjective):
         )
 
         if not (isinstance(n_iter, numbers.Number) or (n_iter is None)):
-            n_iter = set(n_iter)
-            if len(n_iter) > 1:
-                n_iter = max(n_iter)
-            n_iter = n_iter.pop()
+            n_iter = max(n_iter)
 
         # NB: str for n_iter is a more practical type because it enables
         # using missing values for solvers for which it doesn't apply
