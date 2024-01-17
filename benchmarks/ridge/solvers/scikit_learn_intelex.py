@@ -51,7 +51,7 @@ class Solver(BaseSolver):
 
         if solver != "DefaultDense":
             # TODO: investigate ?
-            return True, "DefaultDense is the only supported solver parameter."
+            return True, "The only supported solver parameter is DefaultDense."
 
         return False, None
 

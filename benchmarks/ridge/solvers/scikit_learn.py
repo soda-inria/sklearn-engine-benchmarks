@@ -46,7 +46,7 @@ class Solver(BaseSolver):
             )
 
         if solver == "DefaultDense":
-            return True, "No support this solver parameter."
+            return True, "No support for this solver parameter."
 
         return False, None
 

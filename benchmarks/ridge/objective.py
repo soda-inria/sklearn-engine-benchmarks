@@ -95,10 +95,7 @@ class Objective(BaseObjective):
         if not (isinstance(n_iter, numbers.Number) or (n_iter is None)):
             n_iter = set(n_iter)
             if len(n_iter) > 1:
-                raise ValueError(
-                    "In multitarget mode, the same number of iterations is expected "
-                    "for all targets, to keep reports comparable."
-                )
+                n_iter = max(n_iter)
             n_iter = n_iter.pop()
 
         # NB: str for n_iter is a more practical type because it enables
