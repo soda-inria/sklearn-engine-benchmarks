@@ -174,6 +174,7 @@ PARQUET_TABLE_DISPLAY_MAPPING = dict(
     objective_dataset_param_n_samples=NB_DATA_SAMPLES,
     objective_dataset_param_n_features=NB_DATA_FEATURES,
     objective_dataset_param_n_targets=NB_DATA_TARGETS,
+    objective_objective_param_alpha=REGULARIZATION_STRENGTH,
     objective_dataset_param_dtype=DTYPE,
     objective_dataset_param_random_state=DATA_RANDOM_STATE,
     objective_objective_param_random_state=SOLVER_RANDOM_STATE,
