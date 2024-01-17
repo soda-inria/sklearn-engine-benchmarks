@@ -19,19 +19,19 @@ class Objective(BaseObjective):
     # for all solvers, rather than being an independent benchmark space for each
     # solver.
     parameters = {
-        "alpha": [1.0],
+        "alpha": [1.0, 1e-10],
         "fit_intercept": [True],
         "solver, max_iter, tol": [
-            ("svd", None, 0),
-            ("cholesky", None, 0),
-            ("lsqr", 25, 0),
-            ("sparse_cg", 25, 0),
-            ("sag", 50, 0),
-            ("saga", 25, 0),
-            ("lbfgs", 100, 0),
-            # Used for solvers like scikit-learn-intelex that doesn't
+            ("svd", None, 1e-4),
+            ("cholesky", None, 1e-4),
+            ("lsqr", None, 1e-4),
+            ("sparse_cg", None, 1e-4),
+            ("sag", None, 1e-4),
+            ("saga", None, 1e-4),
+            ("lbfgs", None, 1e-4),
+            # Used for scikit-learn-intelex that doesn't
             # document the underlying solver nor expose the n_iter_ attribute
-            ("???", None, 0),
+            ("DefaultDense", None, 1e-4),
         ],
         "sample_weight": ["None"],  # NB: add "random" to test non None weights
         "random_state": [123],

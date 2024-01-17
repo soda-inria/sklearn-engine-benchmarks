@@ -49,9 +49,9 @@ class Solver(BaseSolver):
 
         solver = objective_dict["solver"]
 
-        if solver != "???":
+        if solver != "DefaultDense":
             # TODO: investigate ?
-            return True, "The underlying solver is unknown."
+            return True, "DefaultDense is the only supported solver parameter."
 
         return False, None
 

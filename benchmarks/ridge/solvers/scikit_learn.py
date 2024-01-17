@@ -45,8 +45,8 @@ class Solver(BaseSolver):
                 "in the benchmark."
             )
 
-        if solver == "???":
-            return True, ""
+        if solver == "DefaultDense":
+            return True, "No support this solver parameter."
 
         return False, None
 
