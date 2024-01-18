@@ -45,7 +45,7 @@ class Solver(BaseSolver):
                 "in the benchmark."
             )
 
-        if solver in ["DefaultDense", "eig", "cg"]:
+        if solver in ["DefaultDense", "eig", "cd"]:
             return True, "No support for this solver parameter."
 
         return False, None
@@ -55,7 +55,7 @@ class Solver(BaseSolver):
         n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:20]
+            sample_weight = sample_weight[:n_warmup_samples].copy()
         Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
@@ -66,8 +66,8 @@ class Solver(BaseSolver):
             positive=True if (self.solver == "lbfgs") else False,
             random_state=self.random_state,
         ).fit(
-            self.X[:n_warmup_samples, :n_warmup_features],
-            self.y[:n_warmup_samples],
+            self.X[:n_warmup_samples, :n_warmup_features].copy(),
+            self.y[:n_warmup_samples].copy(),
             sample_weight,
         )
 

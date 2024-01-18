@@ -63,7 +63,7 @@ class Solver(BaseSolver):
             return True, "Multitarget is not supported."
 
         solver = objective_dict["solver"]
-        if solver not in ["svd", "cg", "eig"]:
+        if solver not in ["svd", "cd", "eig"]:
             return True, "Only accepts the svd solver at the moment."
 
         return False, None
@@ -73,14 +73,14 @@ class Solver(BaseSolver):
         n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:n_warmup_samples]
+            sample_weight = (sample_weight[:n_warmup_samples].copy(),)
         cuml.Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
             solver=self.solver,
         ).fit(
-            self.X[:n_warmup_samples, :n_warmup_features],
-            self.y[:n_warmup_samples],
+            self.X[:n_warmup_samples, :n_warmup_features].copy(),
+            self.y[:n_warmup_samples].copy(),
             sample_weight=sample_weight,
         )
 

@@ -29,7 +29,7 @@ class Objective(BaseObjective):
             ("sag", None, 1e-4),
             ("saga", None, 1e-4),
             ("lbfgs", None, 1e-4),
-            ("cg", None, 1e-4),
+            ("cd", None, 1e-4),
             ("eig", None, None),
             # Used for scikit-learn-intelex that doesn't
             # document the underlying solver nor expose the n_iter_ attribute

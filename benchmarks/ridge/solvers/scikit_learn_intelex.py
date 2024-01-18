@@ -99,7 +99,7 @@ class Solver(BaseSolver):
         n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:n_warmup_samples]
+            sample_weight = sample_weight[:n_warmup_samples].copy()
         with nullcontext() if (self.runtime is None) else config_context(
             target_offload=f"{self.runtime}:{self.device}"
         ):
@@ -113,8 +113,8 @@ class Solver(BaseSolver):
                 positive=True if (self.solver == "lbfgs") else False,
                 random_state=self.random_state,
             ).fit(
-                self.X[:n_warmup_samples, :n_warmup_features],
-                self.y[:n_warmup_samples],
+                self.X[:n_warmup_samples, :n_warmup_features].copy(),
+                self.y[:n_warmup_samples].copy(),
                 sample_weight,
             )
 
