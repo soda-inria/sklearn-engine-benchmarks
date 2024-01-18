@@ -28,7 +28,6 @@ class Objective(BaseObjective):
             ("sparse_cg", None, 1e-4),
             ("sag", None, 1e-4),
             ("saga", None, 1e-4),
-            ("lbfgs", None, 1e-4),
             ("cd", None, 1e-4),
             ("eig", None, None),
             # Used for scikit-learn-intelex that doesn't
