@@ -31,30 +31,6 @@ class Solver(BaseSolver):
 
     stopping_criterion = SingleRunCriterion(1)
 
-    def skip(self, **objective_dict):
-        if self.runtime is not None:
-            try:
-                device = dpctl.SyclDevice(f"{self.runtime}:{self.device}")
-            except Exception:
-                return (
-                    True,
-                    f"{self.runtime} runtime not found for device {self.device}",
-                )
-
-            X = objective_dict["X"]
-            if (X.dtype == np.float64) and not device.has_aspect_fp64:
-                return True, (
-                    f"This {self.device} device has no support for float64 compute"
-                )
-
-        solver = objective_dict["solver"]
-
-        if solver != "DefaultDense":
-            # TODO: investigate ?
-            return True, "The only supported solver parameter is DefaultDense."
-
-        return False, None
-
     def set_objective(
         self,
         X,
@@ -94,10 +70,36 @@ class Solver(BaseSolver):
         self.tol = tol
         self.random_state = random_state
 
+    def skip(self, **objective_dict):
+        if self.runtime is not None:
+            try:
+                device = dpctl.SyclDevice(f"{self.runtime}:{self.device}")
+            except Exception:
+                return (
+                    True,
+                    f"{self.runtime} runtime not found for device {self.device}",
+                )
+
+            X = objective_dict["X"]
+            if (X.dtype == np.float64) and not device.has_aspect_fp64:
+                return True, (
+                    f"This {self.device} device has no support for float64 compute"
+                )
+
+        solver = objective_dict["solver"]
+
+        if solver != "DefaultDense":
+            # TODO: investigate ?
+            return True, "The only supported solver parameter is DefaultDense."
+
+        return False, None
+
     def warm_up(self):
+        n_warmup_samples = 20
+        n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:2]
+            sample_weight = sample_weight[:n_warmup_samples]
         with nullcontext() if (self.runtime is None) else config_context(
             target_offload=f"{self.runtime}:{self.device}"
         ):
@@ -110,7 +112,11 @@ class Solver(BaseSolver):
                 solver="auto",
                 positive=True if (self.solver == "lbfgs") else False,
                 random_state=self.random_state,
-            ).fit(self.X[:2], self.y[:2], sample_weight)
+            ).fit(
+                self.X[:n_warmup_samples, :n_warmup_features],
+                self.y[:n_warmup_samples],
+                sample_weight,
+            )
 
     def run(self, _):
         with nullcontext() if (self.runtime is None) else config_context(

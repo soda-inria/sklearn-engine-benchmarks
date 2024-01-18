@@ -19,29 +19,6 @@ class Solver(BaseSolver):
 
     stopping_criterion = SingleRunCriterion(1)
 
-    def skip(self, **objective_dict):
-
-        X = objective_dict["X"]
-        if X.dtype == np.float64:
-            # We haven't came accross cuda devices that doesn't support float64 yet,
-            # can it happen ? If it happens, the following instruction will fail,
-            # please enclose it with the appropriate Try/Except to return the
-            # appropriate skip decision.
-            cupy.zeros(1, dtype=cupy.float64)
-            # return True, (
-            #     f"This {self.device} device has no support for float64 compute"
-            # )
-
-        y = objective_dict["y"]
-        if (y.ndim == 2) and (y.shape[1] > 1):
-            return True, "Multitarget is not supported."
-
-        solver = objective_dict["solver"]
-        if solver != "svd":
-            return True, "Only accepts the svd solver at the moment."
-
-        return False, None
-
     def set_objective(
         self,
         X,
@@ -68,15 +45,44 @@ class Solver(BaseSolver):
         self.tol = tol
         self.random_state = random_state
 
+    def skip(self, **objective_dict):
+
+        X = objective_dict["X"]
+        if X.dtype == np.float64:
+            # We haven't came accross cuda devices that doesn't support float64 yet,
+            # can it happen ? If it happens, the following instruction will fail,
+            # please enclose it with the appropriate Try/Except to return the
+            # appropriate skip decision.
+            cupy.zeros(1, dtype=cupy.float64)
+            # return True, (
+            #     f"This {self.device} device has no support for float64 compute"
+            # )
+
+        y = objective_dict["y"]
+        if (y.ndim == 2) and (y.shape[1] > 1):
+            return True, "Multitarget is not supported."
+
+        solver = objective_dict["solver"]
+        if solver not in ["svd", "cg", "eig"]:
+            return True, "Only accepts the svd solver at the moment."
+
+        return False, None
+
     def warm_up(self):
+        n_warmup_samples = 20
+        n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:2]
+            sample_weight = sample_weight[:n_warmup_samples]
         cuml.Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
             solver=self.solver,
-        ).fit(self.X[:2], self.y[:2], sample_weight=sample_weight)
+        ).fit(
+            self.X[:n_warmup_samples, :n_warmup_features],
+            self.y[:n_warmup_samples],
+            sample_weight=sample_weight,
+        )
 
     def run(self, _):
         estimator = cuml.Ridge(

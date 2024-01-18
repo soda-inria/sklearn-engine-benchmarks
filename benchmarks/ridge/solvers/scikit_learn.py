@@ -38,22 +38,24 @@ class Solver(BaseSolver):
     def skip(self, **objective_dict):
         solver = objective_dict["solver"]
 
-        if solver in ["sag", "saga", "sparse_cg", "lbfgs"]:
+        if solver in ["sag", "saga"]:
             # TODO: investigate ?
             return True, (
                 "Preliminary testing show this solver is too slow to have relevance "
                 "in the benchmark."
             )
 
-        if solver == "DefaultDense":
+        if solver in ["DefaultDense", "eig", "cg"]:
             return True, "No support for this solver parameter."
 
         return False, None
 
     def warm_up(self):
+        n_warmup_samples = 20
+        n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
-            sample_weight = sample_weight[:2]
+            sample_weight = sample_weight[:20]
         Ridge(
             alpha=self.alpha,
             fit_intercept=self.fit_intercept,
@@ -63,7 +65,11 @@ class Solver(BaseSolver):
             solver=self.solver,
             positive=True if (self.solver == "lbfgs") else False,
             random_state=self.random_state,
-        ).fit(self.X[:2], self.y[:2], sample_weight)
+        ).fit(
+            self.X[:n_warmup_samples, :n_warmup_features],
+            self.y[:n_warmup_samples],
+            sample_weight,
+        )
 
     def run(self, _):
         estimator = Ridge(

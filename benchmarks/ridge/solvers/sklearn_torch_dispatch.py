@@ -30,29 +30,6 @@ class Solver(BaseSolver):
 
     stopping_criterion = SingleRunCriterion(1)
 
-    def skip(self, **objective_dict):
-        if not Ridge()._get_tags()["array_api_support"]:
-            return True, (
-                "Requires the development branch for Ridge support for Array API."
-            )
-
-        try:
-            torch.zeros(1, dtype=torch.float32, device=self.device)
-        except Exception:
-            return True, f"{self.device} compute backend for pytorch not found"
-
-        X = objective_dict["X"]
-        if (X.dtype == np.float64) and not has_fp64_support(self.device):
-            return True, (
-                f"This {self.device} device has no support for float64 compute"
-            )
-
-        solver = objective_dict["solver"]
-        if solver != "svd":
-            return True, "Only accepts the svd solver at the moment."
-
-        return False, None
-
     def set_objective(
         self,
         X,
@@ -82,7 +59,32 @@ class Solver(BaseSolver):
         self.tol = tol
         self.random_state = random_state
 
+    def skip(self, **objective_dict):
+        if not Ridge()._get_tags()["array_api_support"]:
+            return True, (
+                "Requires the development branch for Ridge support for Array API."
+            )
+
+        try:
+            torch.zeros(1, dtype=torch.float32, device=self.device)
+        except Exception:
+            return True, f"{self.device} compute backend for pytorch not found"
+
+        X = objective_dict["X"]
+        if (X.dtype == np.float64) and not has_fp64_support(self.device):
+            return True, (
+                f"This {self.device} device has no support for float64 compute"
+            )
+
+        solver = objective_dict["solver"]
+        if solver != "svd":
+            return True, "Only accepts the svd solver at the moment."
+
+        return False, None
+
     def warm_up(self):
+        n_warmup_samples = 20
+        n_warmup_features = 5
         sample_weight = self.sample_weight
         if sample_weight is not None:
             sample_weight = sample_weight[:2]
@@ -96,7 +98,11 @@ class Solver(BaseSolver):
                 solver=self.solver,
                 positive=True if (self.solver == "lbfgs") else False,
                 random_state=self.random_state,
-            ).fit(self.X[:2], self.y[:2], sample_weight)
+            ).fit(
+                self.X[:n_warmup_samples, :n_warmup_features],
+                self.y[:n_warmup_samples],
+                sample_weight,
+            )
 
     def run(self, _):
         with config_context(array_api_dispatch=True):

@@ -22,13 +22,15 @@ class Objective(BaseObjective):
         "alpha": [1.0, 1e-10],
         "fit_intercept": [True],
         "solver, max_iter, tol": [
-            ("svd", None, 1e-4),
-            ("cholesky", None, 1e-4),
+            ("svd", None, 0),
+            ("cholesky", None, 0),
             ("lsqr", None, 1e-4),
             ("sparse_cg", None, 1e-4),
             ("sag", None, 1e-4),
             ("saga", None, 1e-4),
             ("lbfgs", None, 1e-4),
+            ("cg", None, 1e-4),
+            ("eig", None, None),
             # Used for scikit-learn-intelex that doesn't
             # document the underlying solver nor expose the n_iter_ attribute
             ("DefaultDense", None, 1e-4),

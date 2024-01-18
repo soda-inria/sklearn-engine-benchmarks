@@ -11,8 +11,10 @@ class Dataset(BaseDataset):
     parameters = {
         "n_samples, n_features": [
             (10_000_000, 100),
-            (10_000_000, 10),
+            (5_000_000, 100),
+            (5_000_000, 10),
             (5000, 10000),
+            (5000, 5000),
         ],
         "n_targets": [1, 10],
         "dtype": ["float32"],
