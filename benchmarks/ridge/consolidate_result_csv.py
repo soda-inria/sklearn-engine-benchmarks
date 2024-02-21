@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from pandas.io.parsers.readers import STR_NA_VALUES
 
-GOOGLE_WORKSHEET_NAME = "k-means"
+GOOGLE_WORKSHEET_NAME = "Ridge"
 
 DATES_FORMAT = "%Y-%m-%d"
 
@@ -16,17 +16,13 @@ BENCHMARK_DEFINING_COLUMNS = [
     "objective_dataset_param___name",
     "objective_dataset_param_n_samples",
     "objective_dataset_param_n_features",
+    "objective_dataset_param_n_targets",
     "objective_dataset_param_dtype",
     "objective_dataset_param_random_state",
-    "objective_objective_param_n_clusters",
-    "objective_objective_param_init",
-    "objective_objective_param_n_init",
-    "objective_objective_param_max_iter",
-    "objective_objective_param_tol",
-    "objective_objective_param_verbose",
-    "objective_objective_param_algorithm",
-    "objective_objective_param_random_state",
+    "objective_objective_param_alpha",
+    "objective_objective_param_fit_intercept",
     "objective_objective_param_sample_weight",
+    "objective_objective_param_random_state",
 ]
 
 BENCHMARK_DEFINING_COLUMNS = sorted(BENCHMARK_DEFINING_COLUMNS)
@@ -37,12 +33,12 @@ COMMENT = "Comment"
 COMPUTE_DEVICE = "Compute device"
 COMPUTE_RUNTIME = "Compute runtime"
 DATA_RANDOM_STATE = "Data random state"
-DATA_SAMPLE_WEIGHTS = "Data sample weights"
+REGULARIZATION_STRENGTH = "Regularization strength"
 DTYPE = "Dtype"
-INIT_TYPE = "Init type"
-NB_CLUSTERS = "Nb clusters"
 NB_DATA_FEATURES = "Nb data features"
 NB_DATA_SAMPLES = "Nb data samples"
+NB_DATA_TARGETS = "Nb data targets"
+SOLVER = "Solver"
 PLATFORM = "Platform"
 PLATFORM_ARCHITECTURE = "Platform architecture"
 PLATFORM_RELEASE = "Platform release"
@@ -51,7 +47,7 @@ SYSTEM_PROCESSOR = "Cpu name"
 SYSTEM_RAM = "RAM (GB)"
 SYSTEM_GPU = "Gpu name"
 RESULT_NB_ITERATIONS = "Result nb iterations"
-RESULT_INERTIA = "Result inertia"
+OBJECTIVE_FUNCTION_VALUE = "Result objective value"
 VERSION_INFO = "Version info"
 RUN_DATE = "Run date"
 SOLVER_RANDOM_STATE = "Solver random state"
@@ -64,13 +60,13 @@ TABLE_DISPLAY_ORDER = [
     DTYPE,
     NB_DATA_SAMPLES,
     NB_DATA_FEATURES,
-    NB_CLUSTERS,
-    INIT_TYPE,
-    DATA_SAMPLE_WEIGHTS,
+    NB_DATA_TARGETS,
+    REGULARIZATION_STRENGTH,
     WALLTIME,
     BACKEND_PROVIDER,
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
+    SOLVER,
     SYSTEM_CPUS,
     SYSTEM_PROCESSOR,
     SYSTEM_GPU,
@@ -82,7 +78,7 @@ TABLE_DISPLAY_ORDER = [
     VERSION_INFO,
     COMMENT,
     RESULT_NB_ITERATIONS,
-    RESULT_INERTIA,
+    OBJECTIVE_FUNCTION_VALUE,
     DATA_RANDOM_STATE,
     SOLVER_RANDOM_STATE,
 ]
@@ -92,15 +88,17 @@ COLUMNS_DTYPES = {
     DTYPE: str,
     NB_DATA_SAMPLES: np.int64,
     NB_DATA_FEATURES: np.int64,
-    NB_CLUSTERS: np.int64,
-    INIT_TYPE: str,
-    DATA_SAMPLE_WEIGHTS: str,
+    NB_DATA_TARGETS: np.int64,
+    REGULARIZATION_STRENGTH: np.float64,
     WALLTIME: np.float64,
     BACKEND_PROVIDER: str,
     COMPUTE_DEVICE: str,
     COMPUTE_RUNTIME: str,
-    RESULT_NB_ITERATIONS: np.int64,
-    RESULT_INERTIA: np.float64,
+    # NB: following should be int but str is more practical because it enables
+    # use of missing values for solver for which it doesn't apply.
+    RESULT_NB_ITERATIONS: str,
+    OBJECTIVE_FUNCTION_VALUE: np.float64,
+    SOLVER: str,
     PLATFORM: str,
     PLATFORM_ARCHITECTURE: str,
     PLATFORM_RELEASE: str,
@@ -115,7 +113,7 @@ COLUMNS_DTYPES = {
     COMMENT: str,
 }
 
-COLUMNS_WITH_NONE_STRING = [DATA_SAMPLE_WEIGHTS]
+COLUMNS_WITH_NONE_STRING = []
 
 # If all those fields have equal values for two given benchmarks, then the oldest
 # benchmark (given by RUN_DATE) will be discarded
@@ -124,10 +122,10 @@ UNIQUE_BENCHMARK_KEY = [
     DTYPE,
     NB_DATA_SAMPLES,
     NB_DATA_FEATURES,
-    NB_CLUSTERS,
-    INIT_TYPE,
-    DATA_SAMPLE_WEIGHTS,
+    NB_DATA_TARGETS,
+    REGULARIZATION_STRENGTH,
     BACKEND_PROVIDER,
+    SOLVER,
     COMPUTE_DEVICE,
     COMPUTE_RUNTIME,
     PLATFORM,
@@ -144,15 +142,15 @@ ROW_SORT_ORDER = [
     (DTYPE, True),
     (NB_DATA_SAMPLES, False),
     (NB_DATA_FEATURES, False),
-    (NB_CLUSTERS, False),
-    (INIT_TYPE, False),
-    (DATA_SAMPLE_WEIGHTS, True),
+    (NB_DATA_TARGETS, True),
+    (REGULARIZATION_STRENGTH, False),
     (WALLTIME, True),
     (BACKEND_PROVIDER, True),
     (COMPUTE_DEVICE, True),
     (COMPUTE_RUNTIME, True),
     (RESULT_NB_ITERATIONS, True),
-    (RESULT_INERTIA, False),
+    (OBJECTIVE_FUNCTION_VALUE, False),
+    (SOLVER, True),
     (SYSTEM_GPU, True),
     (SYSTEM_CPUS, True),
     (PLATFORM, True),
@@ -171,16 +169,16 @@ _row_sort_by, _row_sort_ascending = map(list, zip(*ROW_SORT_ORDER))
 
 PARQUET_TABLE_DISPLAY_MAPPING = dict(
     time=WALLTIME,
-    objective_value=RESULT_INERTIA,
+    objective_value=OBJECTIVE_FUNCTION_VALUE,
     objective_n_iter=RESULT_NB_ITERATIONS,
     objective_dataset_param_n_samples=NB_DATA_SAMPLES,
     objective_dataset_param_n_features=NB_DATA_FEATURES,
+    objective_dataset_param_n_targets=NB_DATA_TARGETS,
+    objective_objective_param_alpha=REGULARIZATION_STRENGTH,
     objective_dataset_param_dtype=DTYPE,
     objective_dataset_param_random_state=DATA_RANDOM_STATE,
-    objective_objective_param_n_clusters=NB_CLUSTERS,
-    objective_objective_param_init=INIT_TYPE,
     objective_objective_param_random_state=SOLVER_RANDOM_STATE,
-    objective_objective_param_sample_weight=DATA_SAMPLE_WEIGHTS,
+    objective_objective_param_solver=SOLVER,
     objective_solver_param___name=BACKEND_PROVIDER,
     objective_solver_param_device=COMPUTE_DEVICE,
     objective_solver_param_runtime=COMPUTE_RUNTIME,
@@ -401,6 +399,7 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         worksheet = sheet.add_worksheet(
             GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
         )
+
         # ensure worksheets are sorted anti-alphabetically
         sheet.reorder_worksheets(
             sorted(sheet.worksheets(), key=lambda worksheet: worksheet.title.lower())
@@ -488,7 +487,7 @@ if __name__ == "__main__":
 
     argparser = ArgumentParser(
         description=(
-            "Print an aggregated CSV-formated database of k-means benchmark results "
+            "Print an aggregated CSV-formated database of ridge benchmark results "
             "for the sklearn-engine-benchmarks project hosted at "
             "https://github.com/soda-inria/sklearn-engine-benchmarks.\n\n"
             "The inputs are assumed to be a collection of benchopt parquet files and "
@@ -511,7 +510,7 @@ if __name__ == "__main__":
     argparser.add_argument(
         "--check-csv",
         action="store_true",
-        help="Perform a few sanity checks on a CSV database of k-means benchmark "
+        help="Perform a few sanity checks on a CSV database of ridge benchmark "
         "results. If this option is passed, then the command only expects a single "
         "input path to a csv file.",
     )
@@ -519,7 +518,7 @@ if __name__ == "__main__":
     argparser.add_argument(
         "--sync-to-gspread",
         action="store_true",
-        help="Synchronize a CSV database of k-means benchmark results to a google "
+        help="Synchronize a CSV database of ridge benchmark results to a google "
         "spreadsheet and format it nicely. If this option is passed, then the command "
         "only expects a single input path to a csv file, and also requires "
         "--gspread-url and --gspread-auth-key.",

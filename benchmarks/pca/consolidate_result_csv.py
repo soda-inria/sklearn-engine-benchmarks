@@ -2,7 +2,6 @@ import hashlib
 from functools import partial
 from io import BytesIO
 from itertools import zip_longest
-from operator import attrgetter
 
 import numpy as np
 import pandas as pd
@@ -391,17 +390,18 @@ def _gspread_sync(source, gspread_url, gspread_auth_key):
         worksheet.freeze(0, 0)
         worksheet.resize(rows=n_rows + 1, cols=n_cols)
         worksheet.clear_notes(global_range)
-        white_background = dict(
-            backgroundColorStyle=dict(rgbColor=dict(red=1, green=1, blue=1, alpha=1))
+        reset_format = dict(
+            backgroundColorStyle=dict(rgbColor=dict(red=1, green=1, blue=1, alpha=1)),
+            textFormat=dict(bold=False),
         )
-        worksheet.format(global_range, white_background)
+        worksheet.format(global_range, reset_format)
     except gspread.WorksheetNotFound:
         worksheet = sheet.add_worksheet(
             GOOGLE_WORKSHEET_NAME, rows=n_rows + 1, cols=n_cols
         )
         # ensure worksheets are sorted anti-alphabetically
         sheet.reorder_worksheets(
-            sorted(sheet.worksheets(), key=attrgetter("title"), reverse=True)
+            sorted(sheet.worksheets(), key=lambda worksheet: worksheet.title.lower())
         )
 
     # upload all values

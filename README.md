@@ -18,6 +18,7 @@ hardware.
 Benchmarks are currently available for the following algorithms:
 - [k-means](https://github.com/soda-inria/sklearn-engine-benchmarks/tree/main/benchmarks/kmeans)
 - [PCA](https://github.com/soda-inria/sklearn-engine-benchmarks/tree/main/benchmarks/pca)
+- [Ridge](https://github.com/soda-inria/sklearn-engine-benchmarks/tree/main/benchmarks/pca)
 
 Here is a (non-exhaustive) list of libraries that are compared in the benchmarks:
 - [scikit-learn](https://scikit-learn.org/stable/index.html)
